@@ -76,6 +76,7 @@ Al finalizar la asignatura, serás capaz de **implementar una base de geodatos r
 * 👨‍💻 [Cómo usar el material de laboratorio](Laboratorio/README.md)
 * 🧩 [Plantilla de modelo lógico en draw.io (1:1, 1:N, N:M, entidad fuerte y débil)](DBG_2s_2026_APELLIDONOMBRE.drawio)
 * 📝 [Guías de ejercicios por unidad](Laboratorio/Guías)
+* ✅ [Respuestas de las guías](Laboratorio/Soluciones) (las soluciones SQL están en cada carpeta de `sql/`)
 * 🧭 [Lab autónomo C · Modelo relacional (semana 4)](Laboratorio/Guías/Lab_C_Modelo_Relacional.md)
 * 🧭 [Lab autónomo A · PostgreSQL (semana 6)](Laboratorio/Guías/Lab_A_PostgreSQL.md)
 * 🧭 [Lab autónomo B · Geoprocesos en ArcGIS Pro (semana 12)](Laboratorio/Guías/Lab_B_ArcGIS_Pro.md)

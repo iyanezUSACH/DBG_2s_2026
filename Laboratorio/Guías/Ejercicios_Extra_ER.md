@@ -57,3 +57,7 @@
 - Nómina: identificada por empleado + ejercicio fiscal + mes + número de orden (por si hay varias en el mismo mes); guarda ingreso total y descuento total.
 - Cada nómina tiene varias líneas (al menos una de ingreso), identificadas por número de línea dentro de la nómina; una línea es de ingreso o de descuento, con su cantidad (positiva o negativa) y, si es descuento, la base y el porcentaje aplicado.
 - Toda línea de ingreso responde a un único concepto retributivo (código y descripción); varias líneas pueden compartir el mismo concepto.
+
+## Respuestas
+
+[Respuestas de los ejercicios extra](../Soluciones/Respuestas_Ejercicios_Extra_ER.md).

@@ -65,3 +65,7 @@
 ## Lab 8 · Banco de 15 consultas del proyecto
 
 Cada equipo aplica lo aprendido a **su caso territorial**: redacta 15 preguntas de negocio (al menos 3 con JOIN múltiple, 2 con subconsulta, 2 con CTE, 2 con agregación y HAVING, 1 con operación de conjuntos y 1 vista) y las resuelve en SQL, con pregunta, consulta y resultado esperado. Es parte del Hito P2.
+
+## Respuestas
+
+Soluciones ejecutables de 2.1–2.25 en [a03_academico_soluciones_U2.sql](../sql/01_caso_academico/a03_academico_soluciones_U2.sql) (requiere `a01_esquema.sql` y `a02_datos.sql`; es re-ejecutable). El Lab 8 es abierto y no tiene solución única.

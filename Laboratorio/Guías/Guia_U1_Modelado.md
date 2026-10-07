@@ -67,3 +67,7 @@
 **1.18** Compare dos formas de guardar la comuna de un domicilio: el nombre escrito a mano o el código único territorial con clave foránea a una tabla `comuna`. ¿Qué anomalías evita la segunda?
 
 **1.14** **Transferencia al proyecto.** Tome el problema territorial de su equipo (manejo de una cuenca, zona de sacrificio u otro): identifique cinco entidades, sus relaciones y cuáles tienen ubicación. Escriba el catálogo de entidades del proyecto con el formato de 1.19, incluido el tipo de geometría de cada una. Defina también cómo guardar esa ubicación mientras no haya geometría (código territorial, dirección, latitud y longitud): en la semana 7 esas columnas pasan a `geometry`. Esto alimenta el Hito P1.
+
+## Respuestas
+
+[Respuestas de la Guía U1](../Soluciones/Respuestas_Guia_U1.md). Las de 1.11, 1.12, 1.13 y 1.21 se publican el lunes 19 de octubre, después de la entrega del Lab autónomo C.

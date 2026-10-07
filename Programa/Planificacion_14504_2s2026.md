@@ -59,10 +59,10 @@ completa sin clase presencial.
       transformar el ER a esquema relacional marcando PK, FK y ON DELETE;
       normalizar hasta 3FN la planilla de ejemplo, documentando las
       dependencias funcionales en cada paso.
-    o Valores de control: la planilla de ejemplo se descompone en 4 tablas
-      (persona, carrera, asignatura, inscripción con FK a persona y
-      asignatura); ninguna dependencia transitiva debe quedar en la tabla de
-      inscripción.
+    o Valores de control: la planilla de ejemplo se descompone en 5 tablas
+      (estudiante, carrera, asignatura, sección identificada por asignatura +
+      período + número, e inscripción con FK a estudiante y a sección);
+      ninguna dependencia transitiva debe quedar en la tabla de inscripción.
     o Entrega: domingo 18/10, 23:59. En la clase de la semana 5 se revisa un
       caso al azar antes del Control 1.
 

@@ -69,3 +69,7 @@
 **G.7** Con Near, determine el cuartel de bomberos más cercano a cada foco.
 
 **G.8** Encadene G.4–G.7 en ModelBuilder con parámetros (distancia del buffer, tipo de establecimiento) y exporte el diagrama: será la especificación que traducirán a SQL en la U4.
+
+## Respuestas
+
+[Respuestas del Módulo G](../Soluciones/Respuestas_Modulo_G.md), con el SQL equivalente y los valores de control de cada ejercicio.

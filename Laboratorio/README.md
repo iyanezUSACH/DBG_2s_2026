@@ -8,6 +8,7 @@
 | `sql/01_caso_academico/` | Caso clásico: registro académico universitario (sin geometría) | U1–U2 |
 | `sql/02_caso_incendios/` | Caso territorial: infraestructura crítica e incendios forestales | U3–U4 |
 | `datos/` | CSV y GeoPackage del caso incendios para ArcGIS Pro | U3 |
+| `Soluciones/` | Respuestas de la Guía U1, del Módulo G y de los ejercicios extra de E-R | U1, U3 |
 
 ## Caso clásico (semanas 1–9)
 
@@ -29,6 +30,16 @@ psql -d geodatos -f sql/02_caso_incendios/i01_esquema_relacional.sql
 psql -d geodatos -f sql/02_caso_incendios/i02_datos.sql
 psql -d geodatos -f sql/02_caso_incendios/i03_espacial.sql   # requiere PostGIS
 ```
+
+## Soluciones SQL
+
+| Guía | Script | Requiere |
+|---|---|---|
+| U2 | `sql/01_caso_academico/a03_academico_soluciones_U2.sql` | `a01`, `a02` |
+| U3 | `sql/02_caso_incendios/i04_espacial_soluciones.sql` | `i01`, `i02`, `i03` |
+| U4 | `sql/02_caso_incendios/i05_consultas_espaciales_soluciones.sql` | `i01`–`i03` (y `i04` para 4.15) |
+
+Intente resolver cada ejercicio antes de abrir su solución.
 
 También pueden ejecutarse desde pgAdmin 4: *Query Tool* → abrir el archivo → F5.
 

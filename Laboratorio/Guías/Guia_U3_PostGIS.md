@@ -31,3 +31,7 @@
 **3.10** Genere 200.000 puntos sintéticos y compare con `EXPLAIN ANALYZE` una consulta punto-en-polígono antes y después de crear un índice GiST.
 
 **3.11** Con `fecha_corte`, obtenga el perímetro vigente de cada evento y el crecimiento de VAL-2024-001 entre cortes. Una `catalogo_capa` con `geometry_columns` para una ficha de metadatos por capa.
+
+## Respuestas
+
+Soluciones ejecutables de 3.1–3.11 en [i04_espacial_soluciones.sql](../sql/02_caso_incendios/i04_espacial_soluciones.sql) (requiere `i01`, `i02` e `i03`).

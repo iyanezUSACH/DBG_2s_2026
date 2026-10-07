@@ -46,3 +46,7 @@ ORDER BY id_evento, fecha_corte DESC;
 **4.15** ★ Compare con `EXPLAIN ANALYZE` `ST_Distance(...) < 1000` y `ST_DWithin`. ¿Dónde se usa el índice?
 
 **4.16** Cree la vista `v_exposicion_critica` con geometría, agréguela en ArcGIS Pro como capa de consulta con simbología por nivel, expórtela a GeoPackage con `ogr2ogr` y respalde el esquema con `pg_dump`.
+
+## Respuestas
+
+Soluciones ejecutables de 4.1–4.16 en [i05_consultas_espaciales_soluciones.sql](../sql/02_caso_incendios/i05_consultas_espaciales_soluciones.sql) (requiere `i01`, `i02` e `i03`; para 4.15, también `i04_espacial_soluciones.sql`).
