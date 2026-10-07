@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>De una clase a una base de datos · 14504</title>
+<style>
+:root{
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  --teal:#00a499; --dark:#007a7a; --deep:#14222a; --light:#bbeeee; --soft:#e8f7f6;
+  --ink:#1c262b; --muted:#56636a; --orange:#ea7600; --card:#ffffff; --bg:#f3efe6;
+  --line:#d9d1c2; --chip:#ffffff;
+}
+:root:not([data-theme="light"]){}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#101b20; --card:#17262c; --soft:#12292c; --ink:#eef4f3; --muted:#a5b5ba;
+    --line:#2b3d44; --light:#1d3b3d; --chip:#17262c;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#101b20; --card:#17262c; --soft:#12292c; --ink:#eef4f3; --muted:#a5b5ba;
+  --line:#2b3d44; --light:#1d3b3d; --chip:#17262c;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:"Segoe UI",system-ui,-apple-system,Arial,sans-serif; line-height:1.45;
+}
+header{background:var(--deep); color:#f3efe6; padding:18px 22px}
+header h1{margin:0; font-size:1.25rem}
+header p{margin:4px 0 0; font-size:.9rem; color:#a9bcc2}
+.wrap{max-width:1400px; margin:0 auto; padding:18px}
+.steps{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px}
+.steps button{
+  border:1px solid var(--line); background:var(--chip); color:var(--muted);
+  border-radius:999px; padding:7px 13px; font-size:.82rem; cursor:pointer; font-family:inherit;
+}
+.steps button:hover{border-color:var(--teal)}
+.steps button[aria-current="true"]{background:var(--teal); border-color:var(--teal); color:#fff; font-weight:600}
+.steps button.done{color:var(--dark); border-color:var(--teal)}
+.cols{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:18px}
+@media (max-width:900px){.cols{grid-template-columns:1fr}}
+.panel{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:18px; min-height:340px}
+.panel h2{margin:0 0 4px; font-size:1.05rem; color:var(--dark)}
+.panel .sub{margin:0 0 14px; font-size:.86rem; color:var(--muted)}
+.scene{display:flex; flex-wrap:wrap; gap:14px}
+.fig{
+  width:112px; padding:10px 6px; border-radius:12px; text-align:center; cursor:pointer;
+  background:var(--soft); border:1px solid transparent; transition:.15s;
+}
+.fig:hover{border-color:var(--teal)}
+.fig.on{border-color:var(--orange); background:var(--light)}
+.fig svg{display:block; margin:0 auto 6px}
+.fig b{display:block; font-size:.82rem}
+.fig span{display:block; font-size:.74rem; color:var(--muted)}
+.room{width:100%; background:var(--soft); border-radius:12px; padding:14px; margin-bottom:12px}
+.room .seats{display:grid; grid-template-columns:repeat(8,1fr); gap:6px; margin-top:10px}
+.seat{height:16px; border-radius:4px; background:var(--line)}
+.seat.used{background:var(--teal)}
+.note{font-size:.84rem; color:var(--muted); margin-top:12px; border-left:3px solid var(--orange); padding-left:10px}
+table{border-collapse:collapse; width:100%; font-size:.78rem; margin-bottom:4px}
+th{background:var(--dark); color:#fff; text-align:left; padding:5px 7px; font-weight:600; white-space:nowrap}
+td{padding:5px 7px; border-bottom:1px solid var(--line); white-space:nowrap}
+.tbl{margin-bottom:16px; animation:fade .35s ease}
+.tbl h3{margin:0 0 6px; font-size:.86rem; color:var(--dark); display:flex; align-items:center; gap:7px}
+.tbl h3 em{font-style:normal; font-size:.72rem; color:var(--muted); font-weight:400}
+.scroll{overflow-x:auto}
+tr[data-key]{cursor:pointer}
+tr[data-key]:hover td{background:var(--soft)}
+tr.on td{background:var(--light)}
+td.pk{font-weight:700; color:var(--dark)}
+td.fk{color:var(--orange)}
+@keyframes fade{from{opacity:0; transform:translateY(8px)}to{opacity:1; transform:none}}
+.schema{margin-top:18px; background:var(--card); border:1px solid var(--line); border-radius:14px; padding:18px}
+.schema h2{margin:0 0 12px; font-size:1.05rem; color:var(--dark)}
+#map{position:relative}
+#lines{position:absolute; inset:0; width:100%; height:100%; pointer-events:none}
+.grid{display:grid; grid-template-columns:repeat(4,1fr); gap:12px; position:relative; z-index:1}
+@media (max-width:760px){.grid{grid-template-columns:repeat(2,1fr)}}
+.ent{
+  background:var(--chip); border:2px solid var(--line); border-radius:10px; padding:8px 10px;
+  opacity:.32; transition:.3s; font-size:.78rem;
+}
+.ent.on{opacity:1; border-color:var(--teal)}
+.ent.new{border-color:var(--orange); box-shadow:0 0 0 3px rgba(234,118,0,.18)}
+.ent b{display:block; font-size:.82rem; color:var(--dark)}
+.ent span{color:var(--muted); font-size:.72rem}
+.nav{display:flex; gap:10px; align-items:center; margin-top:16px; flex-wrap:wrap}
+.nav button{
+  font-family:inherit; font-size:.9rem; padding:10px 18px; border-radius:9px; cursor:pointer;
+  border:1px solid var(--teal); background:var(--teal); color:#fff; font-weight:600;
+}
+.nav button.ghost{background:transparent; color:var(--dark)}
+.nav button[disabled]{opacity:.4; cursor:default}
+.count{font-size:.82rem; color:var(--muted)}
+pre{
+  background:var(--deep); color:#eef4f3; padding:14px; border-radius:10px; overflow-x:auto;
+  font-size:.78rem; font-family:"Courier New",monospace; line-height:1.5;
+}
+pre b{color:#f39a6e; font-weight:400}
+footer{padding:14px 22px 26px; font-size:.78rem; color:var(--muted); text-align:center}
+</style>
+</head>
+<body>
+<header>
+  <h1>De una clase a una base de datos</h1>
+  <p>Hoy, martes, bloque 5 · Diseño de Bases de Geodatos (14504) · Universidad de Santiago de Chile</p>
+</header>
+
+<div class="wrap">
+  <div class="steps" id="steps"></div>
+
+  <div class="cols">
+    <section class="panel">
+      <h2 id="sceneTitle"></h2>
+      <p class="sub" id="sceneText"></p>
+      <div class="scene" id="scene"></div>
+      <p class="note" id="sceneNote"></p>
+    </section>
+
+    <section class="panel">
+      <h2>La base de datos que lo sostiene</h2>
+      <p class="sub" id="dbSub">Cada cosa de la izquierda se guarda como una fila. Haz clic en una figura o en una fila para ver el vínculo.</p>
+      <div id="tables"></div>
+    </section>
+  </div>
+
+  <div class="nav">
+    <button class="ghost" id="prev">← Anterior</button>
+    <button id="next">Siguiente →</button>
+    <button class="ghost" id="reset">Reiniciar</button>
+    <span class="count" id="count"></span>
+  </div>
+
+  <section class="schema">
+    <h2>El esquema se va formando</h2>
+    <div id="map">
+      <svg id="lines"></svg>
+      <div class="grid" id="grid"></div>
+    </div>
+  </section>
+</div>
+
+<footer>Datos ficticios con fines docentes · Caso clásico del curso: registro académico universitario</footer>
+
+<script>
+/* ---------------- iconos ---------------- */
+const T='var(--teal)', D='var(--dark)', O='var(--orange)', M='var(--muted)';
+function svg(inner,w=54,h=54){return `<svg viewBox="0 0 54 54" width="${w}" height="${h}" aria-hidden="true">${inner}</svg>`}
+const ICON={
+  alumno: c=>svg(`<circle cx="27" cy="16" r="9" fill="${c||T}"/><path d="M9 48c0-10 8-16 18-16s18 6 18 16z" fill="${c||T}"/>`),
+  profe: ()=>svg(`<circle cx="27" cy="14" r="8" fill="${D}"/><path d="M11 46c0-9 7-15 16-15s16 6 16 15z" fill="${D}"/><rect x="19" y="31" width="16" height="12" fill="${O}"/>`),
+  sala: ()=>svg(`<rect x="6" y="12" width="42" height="30" rx="3" fill="none" stroke="${D}" stroke-width="3"/><rect x="11" y="17" width="20" height="12" fill="${T}"/><rect x="36" y="30" width="8" height="8" fill="${O}"/>`),
+  reloj: ()=>svg(`<circle cx="27" cy="27" r="19" fill="none" stroke="${D}" stroke-width="3"/><path d="M27 15v13l9 6" fill="none" stroke="${O}" stroke-width="3" stroke-linecap="round"/>`),
+  calendario: ()=>svg(`<rect x="8" y="12" width="38" height="34" rx="3" fill="none" stroke="${D}" stroke-width="3"/><path d="M8 22h38" stroke="${D}" stroke-width="3"/><rect x="15" y="27" width="8" height="8" fill="${O}"/><path d="M17 8v8M37 8v8" stroke="${D}" stroke-width="3" stroke-linecap="round"/>`),
+  libro: ()=>svg(`<path d="M9 12h15c3 0 5 2 5 5v27c0-3-2-5-5-5H9z" fill="${T}"/><path d="M45 12H30c-3 0-5 2-5 5v27c0-3 2-5 5-5h15z" fill="${D}"/>`),
+  silla: ()=>svg(`<rect x="15" y="10" width="24" height="18" rx="3" fill="${T}"/><rect x="13" y="30" width="28" height="5" fill="${D}"/><path d="M17 35v11M37 35v11" stroke="${D}" stroke-width="3"/>`),
+  pc: ()=>svg(`<rect x="7" y="12" width="40" height="26" rx="3" fill="none" stroke="${D}" stroke-width="3"/><rect x="12" y="17" width="30" height="16" fill="${T}"/><path d="M18 44h18" stroke="${D}" stroke-width="3" stroke-linecap="round"/>`),
+  proyector: ()=>svg(`<rect x="8" y="20" width="26" height="16" rx="3" fill="${D}"/><circle cx="21" cy="28" r="5" fill="${T}"/><path d="M38 22l10-6v24l-10-6z" fill="${O}"/>`),
+  carrera: ()=>svg(`<path d="M27 10l20 9-20 9-20-9z" fill="${D}"/><path d="M15 25v10c0 4 6 7 12 7s12-3 12-7V25" fill="none" stroke="${T}" stroke-width="3"/>`),
+  depto: ()=>svg(`<path d="M8 46V20l19-10 19 10v26z" fill="none" stroke="${D}" stroke-width="3"/><rect x="22" y="30" width="10" height="16" fill="${T}"/>`),
+  nota: ()=>svg(`<rect x="12" y="8" width="30" height="38" rx="3" fill="none" stroke="${D}" stroke-width="3"/><path d="M18 20h18M18 28h18M18 36h10" stroke="${T}" stroke-width="3" stroke-linecap="round"/>`),
+  avance: ()=>svg(`<rect x="8" y="34" width="9" height="12" fill="${T}"/><rect x="22" y="24" width="9" height="22" fill="${T}"/><rect x="36" y="14" width="9" height="32" fill="${O}"/>`),
+  bd: ()=>svg(`<ellipse cx="27" cy="14" rx="18" ry="7" fill="${T}"/><path d="M9 14v26c0 4 8 7 18 7s18-3 18-7V14" fill="none" stroke="${D}" stroke-width="3"/><path d="M9 27c0 4 8 7 18 7s18-3 18-7" fill="none" stroke="${D}" stroke-width="3"/>`)
+};
+
+/* ---------------- entidades del esquema ---------------- */
+const ENT=[
+  ['bloque_horario','hora de inicio y término'],
+  ['seccion_horario','día · bloque · sala'],
+  ['seccion','asignatura + período + número'],
+  ['asignatura','código · nombre · créditos'],
+  ['departamento','dicta asignaturas'],
+  ['persona','rut · nombre · correo'],
+  ['profesor','departamento · jerarquía'],
+  ['sala','edificio · piso · capacidad'],
+  ['mobiliario','inventario de la sala'],
+  ['edificio','pertenece a un campus'],
+  ['campus','dirección · lat/lon'],
+  ['comuna','código único territorial'],
+  ['domicilio','dónde vive cada persona'],
+  ['estudiante','carrera · año de ingreso'],
+  ['carrera','nombre · duración'],
+  ['prerrequisito','asignatura ← asignatura'],
+  ['inscripcion','estudiante + sección + nota']
+];
+const REL=[
+  ['seccion','asignatura'],['seccion','profesor'],
+  ['seccion_horario','seccion'],['seccion_horario','bloque_horario'],['seccion_horario','sala'],
+  ['asignatura','departamento'],['profesor','persona'],['profesor','departamento'],
+  ['mobiliario','sala'],['sala','edificio'],['edificio','campus'],['campus','comuna'],
+  ['estudiante','persona'],['estudiante','carrera'],['domicilio','persona'],['domicilio','comuna'],
+  ['carrera','departamento'],['prerrequisito','asignatura'],
+  ['inscripcion','estudiante'],['inscripcion','seccion']
+];
+
+/* ---------------- pasos ---------------- */
+const AL=[
+  ['20111222-4','Valentina Castro','ICTM',2024],
+  ['20222333-1','Matías González','ICTM',2024],
+  ['20555666-2','Catalina Reyes','ICG',2024],
+  ['20444555-6','Benjamín Silva','ICTM',2023],
+  ['20777888-5','Isidora Vargas','ICTM',2024]
+];
+const COLOR=['#00a499','#007a7a','#ea7600','#2f8f7a','#4a6fa5'];
+const CAMPUS={lat:-33.4489, lon:-70.6830, n:'Campus Estación Central'};
+// rut: [calle, número, comuna, lat, lon, km al campus]
+const CUT={'Maipú':'13119','Puente Alto':'13201','Estación Central':'13110','La Florida':'13123','Cerrillos':'13106'};
+const DOM={
+ '20111222-4':['Pasaje Los Aromos','145','Maipú',-33.5114,-70.7576,9.81],
+ '20222333-1':['Av. Concha y Toro','2210','Puente Alto',-33.6108,-70.5762,20.54],
+ '20555666-2':['Av. Las Rejas','1180','Estación Central',-33.4598,-70.7123,2.98],
+ '20444555-6':['Los Alerces','332','La Florida',-33.5371,-70.5768,13.90],
+ '20777888-5':['Camino a Melipilla','7720','Cerrillos',-33.4945,-70.7196,6.10]
+};
+
+const STEPS=[
+ {
+  t:'1 · Hoy, martes, bloque 5',
+  title:'Una clase es una fila en una tabla',
+  text:'Lo que ocurre hoy tiene nombre en la base: es una sección de una asignatura, en un día y bloque, en una sala.',
+  note:'La sala y el bloque no caben en seccion: una sección puede reunirse martes y jueves. Por eso existe seccion_horario, con una restricción UNIQUE que impide dos clases en la misma sala, día y bloque.',
+  figs:[{i:'calendario',b:'Martes',s:'día de clases'},{i:'reloj',b:'Bloque 5',s:'14:50 – 16:20'},{i:'sala',b:'LAB-GEO',s:'Edificio DIGEA'}],
+  tables:[
+   {n:'bloque_horario',d:'los bloques de la universidad',c:['num_bloque','hora_inicio','hora_fin'],
+    r:[['4','13:10','14:40'],['5','14:50','16:20'],['6','16:30','18:00']],pk:[0]},
+   {n:'seccion',d:'qué grupo es este',c:['cod_asig','periodo','num_seccion','rut_profesor','cupo'],
+    r:[['14504','2026-2','1','12345678-5','40']],pk:[0,1,2],fk:[3]},
+   {n:'seccion_horario',d:'cuándo y dónde se reúne',c:['cod_asig','periodo','num_seccion','dia','num_bloque','cod_sala'],
+    r:[['14504','2026-2','1','Martes','5','LAB-GEO'],['14504','2026-2','1','Jueves','5','LAB-GEO']],pk:[0,1,2,3,4],fk:[5]}
+  ]
+ },
+ {
+  t:'2 · La asignatura',
+  title:'¿Qué se dicta?',
+  text:'La sección apunta a una asignatura, que pertenece a un departamento y tiene un número de créditos.',
+  note:'Una asignatura existe aunque este semestre no se dicte: por eso vive en su propia tabla y no dentro de la sección.',
+  figs:[{i:'libro',b:'14504',s:'Diseño de Bases de Geodatos'},{i:'depto',b:'DIGEA',s:'Ing. Geoespacial y Ambiental'}],
+  tables:[
+   {n:'asignatura',d:'qué se enseña',c:['cod_asig','nombre','creditos','cod_depto'],
+    r:[['14504','Diseño de Bases de Geodatos','5','DIGEA']],pk:[0],fk:[3]},
+   {n:'departamento',d:'quién la administra',c:['cod_depto','nombre'],r:[['DIGEA','Ingeniería Geoespacial y Ambiental']],pk:[0]}
+  ]
+ },
+ {
+  t:'3 · El profesor',
+  title:'¿Quién la dicta?',
+  text:'El profesor es una persona con un rol. Sus datos personales están una sola vez, en persona; su rol docente, en profesor.',
+  note:'Especialización solapada: la misma persona puede ser profesor y, además, estudiante de magíster.',
+  figs:[{i:'profe',b:'Marta Soto',s:'Profesora asociada'}],
+  tables:[
+   {n:'persona',d:'los datos que no se repiten',c:['rut','nombres','apellidos','email'],
+    r:[['12345678-5','Marta','Soto Rivas','marta.soto@universidad.cl']],pk:[0]},
+   {n:'profesor',d:'el rol docente',c:['rut','cod_depto','jerarquia'],r:[['12345678-5','DIGEA','Asociado']],pk:[0],fk:[0,1]}
+  ]
+ },
+ {
+  t:'4 · La sala, el edificio y el campus',
+  title:'¿Dónde y con qué?',
+  text:'La sala está en un edificio, el edificio en un campus y el campus tiene dirección, comuna y coordenadas. La universidad también ocupa un lugar.',
+  note:'La ubicación entra como atributo: dirección, código de comuna y dos columnas numéricas (latitud y longitud). Todavía no hay geometría.',
+  room:true,
+  figs:[{i:'sala',b:'LAB-GEO',s:'laboratorio, piso 2'},{i:'depto',b:'Edificio DIGEA',s:'Campus Estación Central'},
+        {i:'silla',b:'30 puestos',s:'mobiliario'},{i:'pc',b:'20 equipos',s:'mobiliario'},{i:'proyector',b:'1 proyector',s:'mobiliario'}],
+  tables:[
+   {n:'campus',d:'la universidad tiene dirección',c:['cod_campus','nombre','direccion','cod_comuna','latitud','longitud'],
+    r:[['CEC','Campus Estación Central','Av. L. B. O\'Higgins 3363','13110','-33.448900','-70.683000']],pk:[0],fk:[3]},
+   {n:'comuna',d:'catálogo territorial',c:['cod_comuna','nombre','provincia','region'],
+    r:[['13110','Estación Central','Santiago','Metropolitana de Santiago']],pk:[0]},
+   {n:'edificio',d:'dentro del campus',c:['cod_edificio','nombre','cod_campus','latitud','longitud'],
+    r:[['EDIGEA','Ingeniería Geoespacial y Ambiental','CEC','-33.447200','-70.681500']],pk:[0],fk:[2]},
+   {n:'sala',d:'el espacio',c:['cod_sala','cod_edificio','piso','capacidad','tipo'],
+    r:[['LAB-GEO','EDIGEA','2','30','Laboratorio']],pk:[0],fk:[1]},
+   {n:'mobiliario',d:'lo que hay adentro',c:['id_item','cod_sala','tipo','cantidad','estado'],
+    r:[['1','LAB-GEO','Puesto de trabajo','30','Operativo'],
+       ['2','LAB-GEO','Computador','20','Operativo'],
+       ['3','LAB-GEO','Computador','4','En reparación'],
+       ['4','LAB-GEO','Proyector','1','Operativo'],
+       ['5','LAB-GEO','Pizarra','1','Operativo']],pk:[0],fk:[1]}
+  ]
+ },
+ {
+  t:'5 · Hoy somos 5',
+  title:'Las personas en la sala',
+  text:'Cinco estudiantes. Cada uno es una persona y, además, un estudiante con su año de ingreso. Haz clic en una figura o en una fila.',
+  note:'Clic en un estudiante: se ilumina su fila. Clic en la fila: se ilumina la figura. Eso es una clave primaria haciendo su trabajo.',
+  figs:AL.map((a,i)=>({i:'alumno',c:COLOR[i],b:a[1],s:a[0],k:a[0]})),
+  tables:[
+   {n:'persona',d:'+5 filas',c:['rut','nombres','apellidos','email'],
+    r:AL.map(a=>[a[0],a[1].split(' ')[0],a[1].split(' ')[1],a[1].toLowerCase().replace(' ','.').normalize('NFD').replace(/[\u0300-\u036f]/g,'')+'@alumnos.cl']),pk:[0],keys:AL.map(a=>a[0])},
+   {n:'estudiante',d:'el rol de estudiante',c:['rut','cod_carrera','anio_ingreso'],
+    r:AL.map(a=>[a[0],a[2],String(a[3])]),pk:[0],fk:[0,1],keys:AL.map(a=>a[0])}
+  ]
+ },
+ {
+  t:'6 · Cada uno tiene una carrera',
+  title:'De dónde viene cada estudiante',
+  text:'Cuatro de Ingeniería Civil en Territorio y Medioambiente y una de Ingeniería Civil en Geografía. La carrera, a su vez, pertenece a un departamento.',
+  note:'Aquí aparece la dependencia transitiva que la 3FN elimina: rut → carrera → departamento. El departamento no se guarda en estudiante.',
+  figs:[{i:'carrera',b:'ICTM',s:'4 estudiantes'},{i:'carrera',b:'ICG',s:'1 estudiante'},{i:'depto',b:'DIGEA',s:'administra ambas'}],
+  tables:[
+   {n:'carrera',d:'a qué pertenecen',c:['cod_carrera','nombre','cod_depto','duracion_semestres'],
+    r:[['ICTM','Ingeniería Civil en Territorio y Medioambiente','DIGEA','12'],
+       ['ICG','Ingeniería Civil en Geografía','DIGEA','12']],pk:[0],fk:[2]}
+  ]
+ },
+ {
+  t:'7 · ¿De dónde vienen?',
+  title:'Cada estudiante llega desde alguna parte',
+  text:'El domicilio es una relación 1:1 con persona: calle, número, comuna y coordenadas. Con eso ya se puede calcular cuánto viaja cada quien.',
+  note:'Con latitud y longitud en columnas numéricas, la distancia se calcula con la fórmula de haversine escrita a mano. En la Unidad 3 será ST_Distance sobre una columna geometry.',
+  mapa:true,
+  figs:AL.map((a,i)=>({i:'alumno',c:COLOR[i],b:a[1].split(' ')[0],s:DOM[a[0]][2]+' · '+DOM[a[0]][5]+' km',k:a[0]})),
+  tables:[
+   {n:'domicilio',d:'1:1 con persona',c:['rut','calle','numero','cod_comuna','latitud','longitud'],
+    r:AL.map(a=>{const d=DOM[a[0]]; return [a[0],d[0],d[1],CUT[d[2]],d[3].toFixed(6),d[4].toFixed(6)];}),
+    pk:[0],fk:[0,3],keys:AL.map(a=>a[0])},
+   {n:'comuna',d:'+5 comunas de residencia',c:['cod_comuna','nombre','provincia','region'],
+    r:[...new Set(AL.map(a=>DOM[a[0]][2]))].map(n=>[CUT[n],n,n==='Puente Alto'?'Cordillera':'Santiago','Metropolitana de Santiago']),pk:[0]}
+  ]
+ },
+ {
+  t:'8 · Avance curricular',
+  title:'Lo que cada uno trae de antes',
+  text:'Las notas del período pasado son filas de inscripción ya cerradas. Con ellas se calcula el avance y se verifican los prerrequisitos.',
+  note:'Benjamín reprobó Geotecnologías y Matías reprobó Programación: ambos son prerrequisito de la asignatura de hoy. La base lo detecta con una consulta.',
+  figs:[{i:'avance',b:'Avance',s:'créditos aprobados'},{i:'nota',b:'Actas 2026-1',s:'notas cerradas'},{i:'libro',b:'Prerrequisitos',s:'14501 y 10145'}],
+  tables:[
+   {n:'prerrequisito',d:'qué exige la asignatura de hoy',c:['cod_asig','cod_prereq'],
+    r:[['14504','14501'],['14504','10145']],pk:[0,1],fk:[0,1]},
+   {n:'inscripcion',d:'período anterior, ya con nota',c:['rut_estudiante','cod_asig','periodo','nota','estado'],
+    r:[['20111222-4','14501','2026-1','6.2','Aprobada'],
+       ['20111222-4','10145','2026-1','5.5','Aprobada'],
+       ['20222333-1','14501','2026-1','4.8','Aprobada'],
+       ['20222333-1','10145','2026-1','3.6','Reprobada'],
+       ['20555666-2','14501','2026-1','6.7','Aprobada'],
+       ['20444555-6','14501','2026-1','3.2','Reprobada'],
+       ['20777888-5','14501','2026-1','5.6','Aprobada']],pk:[0,1,2],fk:[0,1],
+    keys:['20111222-4','20111222-4','20222333-1','20222333-1','20555666-2','20444555-6','20777888-5']}
+  ]
+ },
+ {
+  t:'9 · La inscripción de hoy',
+  title:'Por qué están sentados aquí',
+  text:'Cada estudiante presente tiene una fila que lo une con esta sección. La nota todavía es NULL: la asignatura está en curso.',
+  note:'NULL no es cero ni vacío: significa “todavía no se sabe”. Por eso avg(nota) del semestre aún no existe.',
+  figs:AL.map((a,i)=>({i:'alumno',c:COLOR[i],b:a[1].split(' ')[0],s:'inscrito',k:a[0]})),
+  tables:[
+   {n:'inscripcion',d:'+5 filas del período en curso',c:['rut_estudiante','cod_asig','periodo','num_seccion','nota','estado'],
+    r:AL.map(a=>[a[0],'14504','2026-2','1','NULL','Inscrita']),pk:[0,1,2],fk:[0,1,2,3],keys:AL.map(a=>a[0])}
+  ]
+ },
+ {
+  t:'10 · La base completa',
+  title:'Una pregunta, una consulta',
+  text:'Con doce tablas la universidad responde preguntas que ninguna planilla suelta puede responder.',
+  note:'Esta es la misma lógica que en la Unidad 3 aplicaremos al territorio: solo cambia que una de las columnas será una geometría.',
+  figs:[{i:'bd',b:'12 tablas',s:'un solo lugar por dato'},{i:'sala',b:'LAB-GEO',s:'martes, bloque 5'},{i:'alumno',b:'5 personas',s:'y su historia'}],
+  sql:true,
+  tables:[]
+ }
+];
+
+/* ---------------- estado y render ---------------- */
+let step=0;
+const acc={};                 // tabla -> {c, rows:[], meta}
+const stepsBar=document.getElementById('steps');
+const grid=document.getElementById('grid');
+
+STEPS.forEach((s,i)=>{
+  const b=document.createElement('button');
+  b.textContent=s.t; b.onclick=()=>go(i); stepsBar.appendChild(b);
+});
+ENT.forEach(([n,d])=>{
+  const e=document.createElement('div');
+  e.className='ent'; e.id='ent-'+n;
+  e.innerHTML=`<b>${n}</b><span>${d}</span>`;
+  grid.appendChild(e);
+});
+
+function rebuild(){
+  for(const k in acc) delete acc[k];
+  for(let i=0;i<=step;i++){
+    (STEPS[i].tables||[]).forEach(t=>{
+      if(!acc[t.n]) acc[t.n]={c:t.c,rows:[],pk:t.pk||[],fk:t.fk||[],d:t.d,keys:[]};
+      const a=acc[t.n];
+      a.c=t.c; a.pk=t.pk||[]; a.fk=t.fk||[]; a.d=t.d;
+      t.r.forEach((row,j)=>{ a.rows.push(row); a.keys.push((t.keys||[])[j]||null); });
+    });
+  }
+}
+
+function render(){
+  rebuild();
+  const s=STEPS[step];
+  [...stepsBar.children].forEach((b,i)=>{
+    b.setAttribute('aria-current', i===step?'true':'false');
+    b.classList.toggle('done', i<step);
+  });
+  document.getElementById('sceneTitle').textContent=s.title;
+  document.getElementById('sceneText').textContent=s.text;
+  document.getElementById('sceneNote').textContent=s.note;
+  document.getElementById('count').textContent=`Paso ${step+1} de ${STEPS.length}`;
+  document.getElementById('prev').disabled=step===0;
+  document.getElementById('next').disabled=step===STEPS.length-1;
+
+  // escena
+  const sc=document.getElementById('scene');
+  sc.innerHTML='';
+  if(s.room){
+    const seats=Array.from({length:30},(_,i)=>`<div class="seat ${i<5?'used':''}"></div>`).join('');
+    sc.insertAdjacentHTML('beforeend',
+      `<div class="room"><b>Sala LAB-GEO</b> · capacidad 30 · hoy ocupados 5
+       <div class="seats">${seats}</div></div>`);
+  }
+  if(s.mapa){
+    const lats=[CAMPUS.lat,...AL.map(a=>DOM[a[0]][3])], lons=[CAMPUS.lon,...AL.map(a=>DOM[a[0]][4])];
+    const la0=Math.min(...lats)-.02, la1=Math.max(...lats)+.02, lo0=Math.min(...lons)-.02, lo1=Math.max(...lons)+.02;
+    const X=lon=>((lon-lo0)/(lo1-lo0))*440+30, Y=lat=>((la1-lat)/(la1-la0))*240+20;
+    let g='';
+    AL.forEach((a,i)=>{
+      const d=DOM[a[0]];
+      g+=`<line x1="${X(CAMPUS.lon)}" y1="${Y(CAMPUS.lat)}" x2="${X(d[4])}" y2="${Y(d[3])}" stroke="${COLOR[i]}" stroke-width="1.5" stroke-dasharray="4 3" opacity=".7"/>`;
+      g+=`<circle cx="${X(d[4])}" cy="${Y(d[3])}" r="8" fill="${COLOR[i]}"/>`;
+      g+=`<text x="${X(d[4])+11}" y="${Y(d[3])+4}" font-size="11" fill="var(--ink)">${a[1].split(' ')[0]} · ${d[5]} km</text>`;
+    });
+    g+=`<rect x="${X(CAMPUS.lon)-9}" y="${Y(CAMPUS.lat)-9}" width="18" height="18" rx="3" fill="var(--orange)"/>`;
+    g+=`<text x="${X(CAMPUS.lon)+13}" y="${Y(CAMPUS.lat)+4}" font-size="11" font-weight="700" fill="var(--ink)">USACH</text>`;
+    sc.insertAdjacentHTML('beforeend',
+      `<div class="room"><b>Dónde vive cada quien</b> · distancia en línea recta al campus
+       <svg viewBox="0 0 520 290" style="width:100%;height:auto;margin-top:6px">${g}</svg></div>`);
+  }
+  (s.figs||[]).forEach(f=>{
+    const d=document.createElement('div');
+    d.className='fig'; if(f.k) d.dataset.key=f.k;
+    d.innerHTML=(ICON[f.i]?ICON[f.i](f.c):'')+`<b>${f.b}</b><span>${f.s}</span>`;
+    d.onclick=()=>toggle(f.k||null,d);
+    sc.appendChild(d);
+  });
+
+  // tablas
+  const cont=document.getElementById('tables');
+  cont.innerHTML='';
+  const shown=(s.tables||[]).map(t=>t.n);
+  const orden=[...new Set([...shown,...Object.keys(acc)])];
+  orden.forEach(n=>{
+    const a=acc[n]; if(!a) return;
+    const head=a.c.map(c=>`<th>${c}</th>`).join('');
+    const body=a.rows.map((r,i)=>{
+      const tds=r.map((v,j)=>`<td class="${a.pk.includes(j)?'pk':(a.fk.includes(j)?'fk':'')}">${v}</td>`).join('');
+      const k=a.keys[i];
+      return `<tr ${k?`data-key="${k}"`:''}>${tds}</tr>`;
+    }).join('');
+    const nuevo=shown.includes(n)?' <em>· actualizada en este paso</em>':'';
+    cont.insertAdjacentHTML('beforeend',
+      `<div class="tbl"><h3>${n} <em>· ${a.d}${a.rows.length>1?` · ${a.rows.length} filas`:''}</em>${nuevo}</h3>
+       <div class="scroll"><table><tr>${head}</tr>${body}</table></div></div>`);
+  });
+  if(s.sql){
+    cont.insertAdjacentHTML('beforeend',
+      `<pre><b>-- ¿Quién está hoy, martes en el bloque 5, y en qué sala y edificio?</b>
+SELECT p.nombres || ' ' || p.apellidos AS estudiante,
+       cr.nombre AS carrera, a.nombre AS asignatura,
+       h.cod_sala, ed.nombre AS edificio, b.hora_inicio
+FROM   inscripcion i
+JOIN   estudiante  e  ON e.rut = i.rut_estudiante
+JOIN   persona     p  ON p.rut = e.rut
+JOIN   carrera     cr ON cr.cod_carrera = e.cod_carrera
+JOIN   seccion     s  ON (s.cod_asig, s.periodo, s.num_seccion)
+                       = (i.cod_asig, i.periodo, i.num_seccion)
+JOIN   asignatura  a  ON a.cod_asig = s.cod_asig
+JOIN   seccion_horario h ON (h.cod_asig, h.periodo, h.num_seccion)
+                          = (s.cod_asig, s.periodo, s.num_seccion)
+JOIN   bloque_horario  b ON b.num_bloque = h.num_bloque
+JOIN   sala     sa ON sa.cod_sala = h.cod_sala
+JOIN   edificio ed ON ed.cod_edificio = sa.cod_edificio
+WHERE  i.periodo = '2026-2' AND h.dia = 'Martes' AND h.num_bloque = 5;
+<b>-- 5 filas: las mismas 5 personas de la izquierda.</b>
+
+<b>-- ¿Cuánto viaja cada uno hasta el campus?</b>
+SELECT p.apellidos, c.nombre AS comuna,
+       km_haversine(d.latitud, d.longitud,
+                    ca.latitud, ca.longitud) AS km_al_campus
+FROM   estudiante e
+JOIN   persona   p ON p.rut = e.rut
+JOIN   domicilio d ON d.rut = e.rut
+JOIN   comuna    c ON c.cod_comuna = d.cod_comuna
+CROSS JOIN campus ca
+WHERE  ca.cod_campus = 'CEC'
+ORDER  BY km_al_campus DESC;
+<b>-- Puente Alto 20,5 km · Estación Central 3,0 km</b>
+
+<b>-- En la Unidad 3, la misma pregunta con geometría:</b>
+--   ST_Distance(d.geom, ca.geom)
+--   ST_DWithin(d.geom, ca.geom, 5000)
+--   ST_Within(d.geom, c.geom)   -- la comuna real, no la declarada</pre>`);
+  }
+  document.querySelectorAll('tr[data-key]').forEach(tr=>{
+    tr.onclick=()=>toggle(tr.dataset.key,tr);
+  });
+
+  // esquema
+  const activas=new Set();
+  for(let i=0;i<=step;i++) (STEPS[i].tables||[]).forEach(t=>activas.add(t.n));
+  if(step===STEPS.length-1) ENT.forEach(([n])=>activas.add(n));
+  const nuevas=new Set((s.tables||[]).map(t=>t.n));
+  ENT.forEach(([n])=>{
+    const e=document.getElementById('ent-'+n);
+    e.classList.toggle('on',activas.has(n));
+    e.classList.toggle('new',nuevas.has(n));
+  });
+  drawLines(activas);
+}
+
+function toggle(key,el){
+  if(!key){ el.classList.toggle('on'); return; }
+  const on=!el.classList.contains('on');
+  document.querySelectorAll('.fig.on, tr.on').forEach(x=>x.classList.remove('on'));
+  if(on) document.querySelectorAll(`[data-key="${key}"]`).forEach(x=>x.classList.add('on'));
+}
+
+function drawLines(activas){
+  const svgEl=document.getElementById('lines');
+  const box=document.getElementById('map').getBoundingClientRect();
+  svgEl.setAttribute('viewBox',`0 0 ${box.width} ${box.height}`);
+  svgEl.innerHTML='';
+  REL.forEach(([a,b])=>{
+    if(!activas.has(a)||!activas.has(b)) return;
+    const ea=document.getElementById('ent-'+a), eb=document.getElementById('ent-'+b);
+    if(!ea||!eb) return;
+    const ra=ea.getBoundingClientRect(), rb=eb.getBoundingClientRect();
+    const x1=ra.left-box.left+ra.width/2, y1=ra.top-box.top+ra.height/2;
+    const x2=rb.left-box.left+rb.width/2, y2=rb.top-box.top+rb.height/2;
+    svgEl.insertAdjacentHTML('beforeend',
+      `<path d="M${x1} ${y1} L${x2} ${y2}" stroke="var(--teal)" stroke-width="2" opacity=".45" fill="none"/>`);
+  });
+}
+
+function go(i){ step=Math.max(0,Math.min(STEPS.length-1,i)); render(); window.scrollTo({top:0,behavior:'smooth'}); }
+document.getElementById('next').onclick=()=>go(step+1);
+document.getElementById('prev').onclick=()=>go(step-1);
+document.getElementById('reset').onclick=()=>go(0);
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight') go(step+1);
+  if(e.key==='ArrowLeft') go(step-1);
+});
+window.addEventListener('resize',()=>render());
+render();
+</script>
+</body>
+</html>

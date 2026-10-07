@@ -1,0 +1,8 @@
+id_tipo,nombre,critica
+1,Hospital,t
+2,CESFAM,t
+3,Establecimiento educacional,t
+4,Cuartel de bomberos,t
+5,Planta de agua potable,t
+6,Centro comercial,f
+7,Sede vecinal,f

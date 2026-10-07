@@ -1,0 +1,100 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 560" width="1200" height="560" font-family="Segoe UI, Helvetica, Arial, sans-serif" role="img" aria-labelledby="titulo desc">
+  <title id="titulo">Diseño de Bases de Geodatos</title>
+  <desc id="desc">De la tabla al territorio: un modelo relacional con claves primarias y foráneas que se proyecta como capas geográficas de puntos, líneas y polígonos.</desc>
+  <defs>
+    <pattern id="grilla" width="24" height="24" patternUnits="userSpaceOnUse">
+      <path d="M24 0H0V24" fill="none" stroke="#FFFFFF" stroke-opacity="0.06" stroke-width="1"/>
+    </pattern>
+    <clipPath id="marco"><rect width="1200" height="560" rx="18"/></clipPath>
+  </defs>
+
+  <g clip-path="url(#marco)">
+    <!-- fondo -->
+    <rect width="1200" height="560" fill="#0F3D40"/>
+    <rect width="1200" height="560" fill="url(#grilla)"/>
+    <rect x="0" y="0" width="10" height="560" fill="#EA7600"/>
+
+    <!-- curvas de nivel -->
+    <g fill="none" stroke="#00A499" stroke-opacity="0.18" stroke-width="1.4">
+      <path d="M640 560 C 700 470, 860 470, 930 400 S 1120 330, 1200 350"/>
+      <path d="M600 560 C 680 440, 850 440, 920 370 S 1110 290, 1200 305"/>
+      <path d="M560 560 C 650 410, 840 405, 905 335 S 1100 250, 1200 260"/>
+      <path d="M520 560 C 620 380, 830 370, 890 300 S 1090 205, 1200 215"/>
+    </g>
+
+    <!-- texto -->
+    <text x="60" y="92" fill="#7FD3CC" font-size="20" font-weight="600" letter-spacing="3">USACH · DIGEA · 14504</text>
+    <text x="60" y="158" fill="#FFFFFF" font-size="52" font-weight="700">Diseño de Bases</text>
+    <text x="60" y="218" fill="#FFFFFF" font-size="52" font-weight="700">de Geodatos</text>
+    <rect x="60" y="244" width="96" height="5" rx="2" fill="#EA7600"/>
+    <text x="60" y="292" fill="#D7ECEA" font-size="22">De la tabla al territorio</text>
+    <text x="60" y="326" fill="#D7ECEA" font-size="18" fill-opacity="0.85">Modelo ER · SQL · PostgreSQL/PostGIS · ArcGIS Pro</text>
+    <text x="60" y="500" fill="#7FD3CC" font-size="17">2.º semestre 2026</text>
+
+    <!-- modelo relacional -->
+    <g font-size="13">
+      <!-- tabla comuna -->
+      <g transform="translate(560,70)">
+        <rect width="190" height="112" rx="6" fill="#FFFFFF"/>
+        <rect width="190" height="30" rx="6" fill="#007A7A"/>
+        <rect y="24" width="190" height="6" fill="#007A7A"/>
+        <text x="12" y="20" fill="#FFFFFF" font-weight="700">comuna</text>
+        <text x="12" y="52" fill="#EA7600" font-weight="700">PK</text><text x="44" y="52" fill="#2E3A40" text-decoration="underline">cod_comuna</text>
+        <line x1="0" y1="62" x2="190" y2="62" stroke="#2E3A40" stroke-opacity="0.25"/>
+        <text x="44" y="80" fill="#2E3A40">nombre</text>
+        <text x="44" y="100" fill="#2E3A40">region</text>
+      </g>
+      <!-- tabla infraestructura -->
+      <g transform="translate(560,250)">
+        <rect width="190" height="132" rx="6" fill="#FFFFFF"/>
+        <rect width="190" height="30" rx="6" fill="#007A7A"/>
+        <rect y="24" width="190" height="6" fill="#007A7A"/>
+        <text x="12" y="20" fill="#FFFFFF" font-weight="700">infraestructura</text>
+        <text x="12" y="52" fill="#EA7600" font-weight="700">PK</text><text x="44" y="52" fill="#2E3A40" text-decoration="underline">id_infra</text>
+        <text x="12" y="72" fill="#007A7A" font-weight="700">FK</text><text x="44" y="72" fill="#2E3A40">cod_comuna</text>
+        <line x1="0" y1="82" x2="190" y2="82" stroke="#2E3A40" stroke-opacity="0.25"/>
+        <text x="44" y="100" fill="#2E3A40">tipo</text>
+        <text x="44" y="120" fill="#2E3A40">geom</text>
+      </g>
+      <!-- relación 1:N comuna → infraestructura (pata de gallo) -->
+      <g stroke="#FFFFFF" stroke-width="2" fill="none">
+        <path d="M655 182 V 250"/>
+        <path d="M645 194 H 665 M645 200 H 665"/>
+        <path d="M655 238 L 645 250 M655 238 L 665 250 M655 238 V 250"/>
+        <circle cx="655" cy="228" r="5" fill="#0F3D40"/>
+      </g>
+      <text x="668" y="222" fill="#FFFFFF" font-size="14" font-weight="700">1:N</text>
+    </g>
+
+    <!-- flecha hacia el territorio -->
+    <g stroke="#EA7600" stroke-width="3" fill="none" stroke-linecap="round">
+      <path d="M770 316 C 820 316, 830 290, 870 290"/>
+      <path d="M858 280 L 872 290 L 858 300"/>
+    </g>
+
+    <!-- capas geográficas -->
+    <g transform="translate(890,120)">
+      <!-- capa polígonos -->
+      <g transform="translate(0,170)">
+        <path d="M0 60 L 120 0 L 260 40 L 140 100 Z" fill="#00A499" fill-opacity="0.35" stroke="#7FD3CC" stroke-width="1.5"/>
+        <path d="M60 30 L 120 0 L 180 18 L 150 60 L 85 58 Z" fill="#EA7600" fill-opacity="0.55" stroke="#FFFFFF" stroke-width="1"/>
+        <path d="M150 60 L 180 18 L 260 40 L 190 75 Z" fill="#00A499" fill-opacity="0.55" stroke="#FFFFFF" stroke-width="1"/>
+      </g>
+      <!-- capa líneas -->
+      <g transform="translate(0,95)">
+        <path d="M0 60 L 120 0 L 260 40 L 140 100 Z" fill="#FFFFFF" fill-opacity="0.06" stroke="#7FD3CC" stroke-width="1.5"/>
+        <path d="M30 62 C 80 40, 120 60, 170 35 S 230 40, 245 40" fill="none" stroke="#FFFFFF" stroke-width="2.5"/>
+        <path d="M105 15 L 150 85" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-dasharray="5 4"/>
+      </g>
+      <!-- capa puntos -->
+      <g transform="translate(0,20)">
+        <path d="M0 60 L 120 0 L 260 40 L 140 100 Z" fill="#FFFFFF" fill-opacity="0.06" stroke="#7FD3CC" stroke-width="1.5"/>
+        <circle cx="90" cy="45" r="7" fill="#EA7600" stroke="#FFFFFF" stroke-width="2"/>
+        <circle cx="150" cy="30" r="7" fill="#EA7600" stroke="#FFFFFF" stroke-width="2"/>
+        <circle cx="175" cy="62" r="7" fill="#EA7600" stroke="#FFFFFF" stroke-width="2"/>
+        <circle cx="120" cy="72" r="7" fill="#EA7600" stroke="#FFFFFF" stroke-width="2"/>
+      </g>
+      <text x="0" y="330" fill="#D7ECEA" font-size="15">puntos · líneas · polígonos (SRID 32719)</text>
+    </g>
+  </g>
+</svg>

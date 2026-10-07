@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Esquema de base de datos · 14504</title>
+<style>
+:root{
+  box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+  --teal:#00a499; --dark:#007a7a; --deep:#14222a; --soft:#e8f7f6; --orange:#ea7600;
+  --ink:#1c262b; --muted:#5b686f; --bg:#f3efe6; --card:#fff; --line:#cfd8da; --grid:#e6e0d4;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f1a1f; --card:#17262c; --soft:#12292c; --ink:#eef4f3; --muted:#a5b5ba; --line:#33474e; --grid:#1b2c33;}}
+:root[data-theme="dark"]{--bg:#0f1a1f; --card:#17262c; --soft:#12292c; --ink:#eef4f3; --muted:#a5b5ba; --line:#33474e; --grid:#1b2c33;}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0; background:var(--bg); color:var(--ink); font-family:"Segoe UI",system-ui,-apple-system,Arial,sans-serif}
+header{background:var(--deep); color:#f3efe6; padding:16px 20px}
+header h1{margin:0; font-size:1.15rem}
+header p{margin:3px 0 0; font-size:.86rem; color:#a9bcc2}
+.bar{display:flex; flex-wrap:wrap; gap:8px; align-items:center; padding:12px 20px; border-bottom:1px solid var(--line); background:var(--card)}
+.bar button, .bar select{
+  font-family:inherit; font-size:.84rem; padding:7px 13px; border-radius:8px; cursor:pointer;
+  border:1px solid var(--line); background:transparent; color:var(--ink);
+}
+.bar button.on{background:var(--teal); border-color:var(--teal); color:#fff; font-weight:600}
+.bar .sep{flex:1}
+.bar .hint{font-size:.78rem; color:var(--muted)}
+.stage{position:relative; overflow:auto; height:calc(100vh - 210px); min-height:460px; background:
+  linear-gradient(var(--grid) 1px, transparent 1px) 0 0/28px 28px,
+  linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0/28px 28px, var(--bg);}
+#canvas{position:relative; transform-origin:0 0}
+#wires{position:absolute; left:0; top:0; overflow:visible; pointer-events:none}
+.tb{
+  position:absolute; width:250px; background:var(--card); border:1.5px solid var(--line);
+  border-radius:9px; box-shadow:0 2px 10px rgba(0,0,0,.07); font-size:.76rem; transition:opacity .2s, border-color .2s;
+}
+.tb header{background:var(--dark); color:#fff; padding:7px 10px; border-radius:7px 7px 0 0; font-weight:700; font-size:.82rem; display:flex; justify-content:space-between; gap:6px}
+.tb header span{font-weight:400; opacity:.8; font-size:.7rem}
+.tb .row{display:flex; gap:6px; padding:4px 10px; border-top:1px solid var(--line); align-items:center; white-space:nowrap}
+.tb .row .k{width:16px; text-align:center; font-size:.7rem}
+.tb .row .n{flex:1; overflow:hidden; text-overflow:ellipsis}
+.tb .row .t{color:var(--muted); font-size:.68rem}
+.tb .row.pk .n{font-weight:700; color:var(--dark)}
+.tb .row.fk .n{color:var(--orange)}
+.tb.dim{opacity:.18}
+.tb.sel{border-color:var(--orange); box-shadow:0 0 0 3px rgba(234,118,0,.25)}
+.tb.rel{border-color:var(--teal)}
+.tb.geo header{background:var(--teal)}
+.legend{display:flex; flex-wrap:wrap; gap:16px; padding:10px 20px; font-size:.76rem; color:var(--muted); border-top:1px solid var(--line); background:var(--card)}
+.legend b{color:var(--ink)}
+.info{
+  position:fixed; right:16px; bottom:16px; width:320px; max-width:calc(100vw - 32px); background:var(--card);
+  border:1px solid var(--line); border-radius:12px; padding:14px 16px; box-shadow:0 6px 24px rgba(0,0,0,.14); font-size:.82rem;
+  display:none; z-index:5;
+}
+.info.on{display:block}
+.info h3{margin:0 0 6px; font-size:.95rem; color:var(--dark)}
+.info p{margin:0 0 8px; color:var(--muted)}
+.info ul{margin:0; padding-left:18px}
+.info li{margin-bottom:4px}
+.info button{position:absolute; top:8px; right:10px; border:0; background:transparent; color:var(--muted); font-size:1rem; cursor:pointer}
+</style>
+</head>
+<body>
+<header>
+  <h1>Esquema de base de datos · Diseño de Bases de Geodatos (14504)</h1>
+  <p>Tablas, columnas, claves y relaciones. Haz clic en una tabla para aislar sus vínculos.</p>
+</header>
+
+<div class="bar">
+  <button id="bA" class="on">Caso académico (U1–U2)</button>
+  <button id="bI">Caso incendios (U3–U4)</button>
+  <span class="sep"></span>
+  <button id="keys">Solo claves</button>
+  <button id="zoomOut">−</button><button id="zoomIn">+</button><button id="fit">Ajustar</button>
+  <span class="hint" id="hint"></span>
+</div>
+
+<div class="stage" id="stage">
+  <div id="canvas"><svg id="wires"></svg></div>
+</div>
+
+<div class="legend">
+  <span><b>🔑</b> clave primaria</span>
+  <span><b style="color:var(--orange)">↗</b> clave foránea</span>
+  <span><b>—&lt;</b> lado N (muchos)</span>
+  <span><b>—|</b> lado 1 (uno)</span>
+  <span><b>línea naranja</b> relación de la tabla seleccionada</span>
+  <span><b>cabecera turquesa</b> tabla con columna geométrica</span>
+</div>
+
+<div class="info" id="info"><button onclick="clearSel()">✕</button><div id="infoBody"></div></div>
+
+<script>
+/* ============ definición de los esquemas ============ */
+const ACADEMICO={
+ nombre:'academico · registro académico universitario',
+ tablas:{
+  comuna:{x:20,y:20,d:'Catálogo territorial (código único territorial)',c:[['cod_comuna','char(5)','pk'],['nombre','varchar'],['provincia','varchar'],['region','varchar']]},
+  campus:{x:20,y:210,d:'La universidad también tiene dirección y coordenadas',c:[['cod_campus','varchar','pk'],['nombre','varchar'],['direccion','varchar'],['cod_comuna','char(5)','fk'],['latitud','numeric'],['longitud','numeric']]},
+  edificio:{x:20,y:450,d:'Cada edificio pertenece a un campus',c:[['cod_edificio','varchar','pk'],['nombre','varchar'],['cod_campus','varchar','fk'],['latitud','numeric'],['longitud','numeric']]},
+  sala:{x:20,y:660,d:'Aula, laboratorio o taller dentro de un edificio',c:[['cod_sala','varchar','pk'],['cod_edificio','varchar','fk'],['piso','smallint'],['capacidad','smallint'],['tipo','varchar']]},
+  mobiliario:{x:20,y:870,d:'Inventario de la sala: relación 1:N que evita violar la 1FN',c:[['id_item','serial','pk'],['cod_sala','varchar','fk'],['tipo','varchar'],['cantidad','smallint'],['estado','varchar']]},
+  domicilio:{x:330,y:20,d:'Relación 1:1 con persona: la ubicación como atributo',c:[['rut','d_rut','pk fk'],['calle','varchar'],['numero','varchar'],['cod_comuna','char(5)','fk'],['latitud','d_lat'],['longitud','d_lon']]},
+  persona:{x:330,y:280,d:'Superclase: los datos personales se guardan una sola vez',c:[['rut','d_rut','pk'],['nombres','varchar'],['apellidos','varchar'],['email','d_email'],['fecha_nac','date']]},
+  departamento:{x:330,y:500,d:'Dicta asignaturas y administra carreras',c:[['cod_depto','varchar','pk'],['nombre','varchar']]},
+  carrera:{x:330,y:640,d:'Pertenece a un departamento',c:[['cod_carrera','varchar','pk'],['nombre','varchar'],['cod_depto','varchar','fk'],['duracion_semestres','smallint']]},
+  estudiante:{x:650,y:20,d:'Subclase de persona (especialización solapada)',c:[['rut','d_rut','pk fk'],['cod_carrera','varchar','fk'],['anio_ingreso','smallint']]},
+  profesor:{x:650,y:200,d:'Subclase de persona: la misma persona puede ser ambas',c:[['rut','d_rut','pk fk'],['cod_depto','varchar','fk'],['jerarquia','varchar']]},
+  asignatura:{x:650,y:390,d:'Existe aunque este semestre no se dicte',c:[['cod_asig','varchar','pk'],['nombre','varchar'],['creditos','smallint'],['cod_depto','varchar','fk']]},
+  prerrequisito:{x:650,y:600,d:'Relación recursiva N:M: asignatura ← asignatura',c:[['cod_asig','varchar','pk fk'],['cod_prereq','varchar','pk fk']]},
+  inscripcion:{x:960,y:20,d:'Relación N:M con atributos entre estudiante y sección',c:[['rut_estudiante','d_rut','pk fk'],['cod_asig','varchar','pk fk'],['periodo','d_periodo','pk fk'],['num_seccion','smallint','fk'],['fecha_inscripcion','date'],['nota','d_nota'],['estado','varchar']]},
+  seccion:{x:960,y:320,d:'Entidad débil: asignatura + período + número',c:[['cod_asig','varchar','pk fk'],['periodo','d_periodo','pk'],['num_seccion','smallint','pk'],['rut_profesor','d_rut','fk'],['cupo','smallint']]},
+  seccion_horario:{x:960,y:560,d:'Cada reunión: día, bloque y sala. UNIQUE evita dos clases en la misma sala y bloque',c:[['cod_asig','varchar','pk fk'],['periodo','d_periodo','pk fk'],['num_seccion','smallint','pk fk'],['dia','varchar','pk'],['num_bloque','smallint','pk fk'],['cod_sala','varchar','fk']]},
+  bloque_horario:{x:960,y:830,d:'Los ocho bloques institucionales',c:[['num_bloque','smallint','pk'],['hora_inicio','time'],['hora_fin','time']]}
+ },
+ rel:[
+  ['campus','cod_comuna','comuna','cod_comuna','N:1','Muchos campus en una comuna'],
+  ['domicilio','cod_comuna','comuna','cod_comuna','N:1','Muchos domicilios en una comuna'],
+  ['domicilio','rut','persona','rut','1:1','Cada persona declara un domicilio'],
+  ['edificio','cod_campus','campus','cod_campus','N:1','Un campus tiene muchos edificios'],
+  ['sala','cod_edificio','edificio','cod_edificio','N:1','Un edificio tiene muchas salas'],
+  ['mobiliario','cod_sala','sala','cod_sala','N:1','Una sala tiene muchos ítems'],
+  ['estudiante','rut','persona','rut','1:1','Subclase: mismo rut que la persona'],
+  ['profesor','rut','persona','rut','1:1','Subclase: mismo rut que la persona'],
+  ['estudiante','cod_carrera','carrera','cod_carrera','N:1','Una carrera tiene muchos estudiantes'],
+  ['carrera','cod_depto','departamento','cod_depto','N:1','Un departamento administra varias carreras'],
+  ['profesor','cod_depto','departamento','cod_depto','N:1','Un departamento tiene muchos profesores'],
+  ['asignatura','cod_depto','departamento','cod_depto','N:1','Un departamento dicta muchas asignaturas'],
+  ['prerrequisito','cod_asig','asignatura','cod_asig','N:1','La asignatura que exige'],
+  ['prerrequisito','cod_prereq','asignatura','cod_asig','N:1','La asignatura exigida (recursiva)'],
+  ['seccion','cod_asig','asignatura','cod_asig','N:1','Una asignatura tiene muchas secciones'],
+  ['seccion','rut_profesor','profesor','rut','N:1','Un profesor dicta varias secciones'],
+  ['seccion_horario','cod_asig','seccion','cod_asig','N:1','Una sección se reúne varios días'],
+  ['seccion_horario','num_bloque','bloque_horario','num_bloque','N:1','Un bloque se usa en muchos horarios'],
+  ['seccion_horario','cod_sala','sala','cod_sala','N:1','Una sala aloja muchas clases'],
+  ['inscripcion','rut_estudiante','estudiante','rut','N:1','Un estudiante tiene muchas inscripciones'],
+  ['inscripcion','cod_asig','seccion','cod_asig','N:1','Una sección tiene muchos inscritos']
+ ]
+};
+
+const INCENDIOS={
+ nombre:'riesgo · infraestructura crítica e incendios forestales',
+ tablas:{
+  region:{x:20,y:60,d:'Catálogo de regiones',c:[['cod_region','smallint','pk'],['nombre','varchar']]},
+  comuna:{x:20,y:220,d:'Polígono comunal · geometry(MultiPolygon, 32719)',geo:1,c:[['cod_comuna','char(5)','pk'],['nombre','varchar'],['cod_region','smallint','fk'],['poblacion','integer'],['geom','geometry']]},
+  via:{x:20,y:470,d:'Red vial · geometry(MultiLineString, 32719)',geo:1,c:[['id_via','serial','pk'],['nombre','varchar'],['categoria','varchar'],['geom','geometry']]},
+  catalogo_capa:{x:20,y:670,d:'Metadatos y procedencia de cada capa',c:[['tabla','varchar','pk'],['fuente','varchar'],['fecha_fuente','date'],['escala_ref','varchar'],['srid','integer'],['responsable','varchar']]},
+  tipo_infraestructura:{x:340,y:60,d:'Catálogo: hospital, CESFAM, escuela, bomberos…',c:[['id_tipo','smallserial','pk'],['nombre','varchar'],['critica','boolean']]},
+  infraestructura:{x:340,y:230,d:'Establecimientos · geometry(Point, 32719)',geo:1,c:[['id_infra','serial','pk'],['nombre','varchar'],['id_tipo','smallint','fk'],['cod_comuna','char(5)','fk'],['capacidad','integer'],['x_utm','numeric'],['y_utm','numeric'],['geom','geometry']]},
+  cobertura_bomberos:{x:340,y:560,d:'N:M: qué cuartel atiende qué comunas',c:[['id_infra','integer','pk fk'],['cod_comuna','char(5)','pk fk'],['fecha_convenio','date']]},
+  evento_incendio:{x:660,y:60,d:'Focos · geometry(Point, 32719)',geo:1,c:[['id_evento','serial','pk'],['codigo','varchar'],['fecha_inicio','timestamp'],['fecha_control','timestamp'],['causa','d_causa'],['sup_afectada_ha','numeric'],['cod_comuna','char(5)','fk'],['geom','geometry']]},
+  evento_afecta:{x:660,y:420,d:'N:M con atributo: qué establecimiento dañó cada evento',c:[['id_evento','integer','pk fk'],['id_infra','integer','pk fk'],['nivel_dano','varchar']]},
+  area_quemada:{x:660,y:600,d:'Perímetros por fecha de corte · geometry(MultiPolygon, 32719)',geo:1,c:[['id_area','serial','pk'],['id_evento','integer','fk'],['fecha_corte','date'],['fuente','varchar'],['geom','geometry']]}
+ },
+ rel:[
+  ['comuna','cod_region','region','cod_region','N:1','Una región tiene muchas comunas'],
+  ['infraestructura','id_tipo','tipo_infraestructura','id_tipo','N:1','Un tipo agrupa muchos establecimientos'],
+  ['infraestructura','cod_comuna','comuna','cod_comuna','N:1','Una comuna tiene muchos establecimientos'],
+  ['cobertura_bomberos','id_infra','infraestructura','id_infra','N:1','Un cuartel atiende varias comunas'],
+  ['cobertura_bomberos','cod_comuna','comuna','cod_comuna','N:1','Una comuna es atendida por varios cuarteles'],
+  ['evento_incendio','cod_comuna','comuna','cod_comuna','N:1','Una comuna registra muchos eventos'],
+  ['evento_afecta','id_evento','evento_incendio','id_evento','N:1','Un evento afecta varios establecimientos'],
+  ['evento_afecta','id_infra','infraestructura','id_infra','N:1','Un establecimiento puede ser afectado por varios eventos'],
+  ['area_quemada','id_evento','evento_incendio','id_evento','N:1','Un evento tiene varios perímetros en el tiempo']
+ ]
+};
+
+/* ============ render ============ */
+let ESQ=ACADEMICO, sel=null, soloClaves=false, zoom=1;
+const canvas=document.getElementById('canvas'), wires=document.getElementById('wires');
+
+function draw(){
+  [...canvas.querySelectorAll('.tb')].forEach(e=>e.remove());
+  let maxX=0,maxY=0;
+  for(const [n,t] of Object.entries(ESQ.tablas)){
+    const d=document.createElement('div');
+    d.className='tb'+(t.geo?' geo':''); d.id='tb-'+n; d.style.left=t.x+'px'; d.style.top=t.y+'px';
+    const filas=t.c.filter(c=>!soloClaves||(c[2]||'').length).map(c=>{
+      const f=c[2]||'', pk=f.includes('pk'), fk=f.includes('fk');
+      return `<div class="row ${pk?'pk':''} ${fk?'fk':''}" id="r-${n}.${c[0]}">
+        <span class="k">${pk?'🔑':(fk?'↗':'')}</span><span class="n">${c[0]}</span><span class="t">${c[1]}</span></div>`;
+    }).join('');
+    d.innerHTML=`<header>${n}<span>${t.c.length} col.</span></header>${filas}`;
+    d.onclick=e=>{e.stopPropagation(); select(n)};
+    canvas.appendChild(d);
+    maxX=Math.max(maxX,t.x+260); maxY=Math.max(maxY,t.y+d.offsetHeight+30);
+  }
+  canvas.style.width=maxX+'px'; canvas.style.height=maxY+'px';
+  wires.setAttribute('width',maxX); wires.setAttribute('height',maxY);
+  wires.setAttribute('viewBox',`0 0 ${maxX} ${maxY}`);
+  lines();
+  document.getElementById('hint').textContent=
+    `${Object.keys(ESQ.tablas).length} tablas · ${ESQ.rel.length} relaciones · ${ESQ.nombre}`;
+}
+
+function pos(tabla,col){
+  const tb=document.getElementById('tb-'+tabla);
+  const row=document.getElementById('r-'+tabla+'.'+col);
+  const y=tb.offsetTop+(row?row.offsetTop+row.offsetHeight/2:20);
+  return {l:tb.offsetLeft, r:tb.offsetLeft+tb.offsetWidth, y, cx:tb.offsetLeft+tb.offsetWidth/2};
+}
+
+function lines(){
+  let s='';
+  ESQ.rel.forEach((r,i)=>{
+    const [ft,fc,tt,tc,card]=r;
+    if(!ESQ.tablas[ft]||!ESQ.tablas[tt]) return;
+    const a=pos(ft,fc), b=pos(tt,tc);
+    const der = a.cx <= b.cx;                    // ¿sale por la derecha?
+    const x1 = der? a.r : a.l, x2 = der? b.l : b.r;
+    const s1 = der? 18 : -18, s2 = der? -18 : 18;
+    const mx = (x1+s1+x2+s2)/2;
+    const act = !sel || sel===ft || sel===tt;
+    const col = (sel && act)? 'var(--orange)' : 'var(--teal)';
+    const op  = act? (sel?1:.75) : .07;
+    s+=`<path d="M${x1} ${a.y} H${x1+s1} H${mx} V${b.y} H${x2+s2} H${x2}" fill="none"
+         stroke="${col}" stroke-width="${act&&sel?2.4:1.6}" opacity="${op}"/>`;
+    // pata de gallo en el lado N (la tabla con la clave foránea)
+    const d1 = der? -1 : 1;
+    s+=`<path d="M${x1} ${a.y} l${12*d1} -6 M${x1} ${a.y} l${12*d1} 6 M${x1} ${a.y} l${12*d1} 0"
+         stroke="${col}" stroke-width="1.6" fill="none" opacity="${op}"/>`;
+    // marca de "uno" en el lado PK
+    const d2 = der? 1 : -1;
+    s+=`<path d="M${x2+9*d2} ${b.y-6} V${b.y+6}" stroke="${col}" stroke-width="1.8" opacity="${op}"/>`;
+    if(act) s+=`<text x="${mx+4}" y="${(a.y+b.y)/2-4}" font-size="10" fill="${col}" opacity="${op}">${card}</text>`;
+  });
+  wires.innerHTML=s;
+}
+
+function select(n){
+  sel = (sel===n)? null : n;
+  const vinc=new Set();
+  if(sel) ESQ.rel.forEach(([ft,fc,tt])=>{ if(ft===sel) vinc.add(tt); if(tt===sel) vinc.add(ft); });
+  Object.keys(ESQ.tablas).forEach(t=>{
+    const e=document.getElementById('tb-'+t);
+    e.classList.toggle('sel', sel===t);
+    e.classList.toggle('rel', !!sel && vinc.has(t));
+    e.classList.toggle('dim', !!sel && t!==sel && !vinc.has(t));
+  });
+  const box=document.getElementById('info'), body=document.getElementById('infoBody');
+  if(!sel){ box.classList.remove('on'); lines(); return; }
+  const t=ESQ.tablas[sel];
+  const salidas=ESQ.rel.filter(r=>r[0]===sel).map(r=>`<li><b>${r[1]}</b> → ${r[2]}.${r[3]} <em>(${r[5]})</em></li>`).join('');
+  const entradas=ESQ.rel.filter(r=>r[2]===sel).map(r=>`<li>${r[0]}.${r[1]} → <b>${r[3]}</b> <em>(${r[5]})</em></li>`).join('');
+  body.innerHTML=`<h3>${sel}</h3><p>${t.d}</p>`+
+    (salidas?`<p><b>Claves foráneas que salen</b></p><ul>${salidas}</ul>`:'')+
+    (entradas?`<p style="margin-top:8px"><b>Tablas que la referencian</b></p><ul>${entradas}</ul>`:'');
+  box.classList.add('on');
+  lines();
+}
+function clearSel(){ if(sel) select(sel); }
+
+document.getElementById('stage').onclick=()=>clearSel();
+document.getElementById('bA').onclick=e=>{ESQ=ACADEMICO; sel=null; marca(e.target); draw(); fit();};
+document.getElementById('bI').onclick=e=>{ESQ=INCENDIOS; sel=null; marca(e.target); draw(); fit();};
+function marca(b){ ['bA','bI'].forEach(id=>document.getElementById(id).classList.toggle('on', document.getElementById(id)===b)); }
+document.getElementById('keys').onclick=e=>{ soloClaves=!soloClaves; e.target.classList.toggle('on',soloClaves); draw(); };
+function setZoom(z){ zoom=Math.min(1.6,Math.max(.35,z)); canvas.style.transform=`scale(${zoom})`; }
+document.getElementById('zoomIn').onclick=e=>{e.stopPropagation(); setZoom(zoom+.15)};
+document.getElementById('zoomOut').onclick=e=>{e.stopPropagation(); setZoom(zoom-.15)};
+function fit(){
+  const st=document.getElementById('stage');
+  setZoom(Math.min(1, (st.clientWidth-24)/canvas.offsetWidth));
+}
+document.getElementById('fit').onclick=e=>{e.stopPropagation(); fit()};
+window.addEventListener('resize',fit);
+draw(); fit();
+</script>
+</body>
+</html>

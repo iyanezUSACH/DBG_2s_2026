@@ -1,0 +1,20 @@
+id_infra,nombre,id_tipo,cod_comuna,capacidad,x_utm,y_utm,fuente,fecha_registro
+1,Hospital Dr. Gustavo Fricke,1,05109,600,263500.00,6344500.00,Sintético curso 14504,2023-03-01
+2,Hospital Carlos van Buren,1,05101,500,254000.00,6337000.00,Sintético curso 14504,2023-03-01
+3,Hospital de Quilpué,1,05801,250,273500.00,6341500.00,Sintético curso 14504,2023-03-01
+4,CESFAM Belloto Sur,2,05801,,276500.00,6339500.00,Sintético curso 14504,2023-04-10
+5,CESFAM Reñaca Alto,2,05109,,261000.00,6348500.00,Sintético curso 14504,2023-04-10
+6,CESFAM Villa Alemana,2,05804,,281500.00,6340500.00,Sintético curso 14504,2023-04-10
+7,Escuela Villa Independencia,3,05109,420,267500.00,6346800.00,Sintético curso 14504,2023-05-02
+8,Escuela El Retiro,3,05801,380,272500.00,6346000.00,Sintético curso 14504,2023-05-02
+9,Liceo Concón,3,05103,650,262000.00,6353000.00,Sintético curso 14504,2023-05-02
+10,Escuela Cerro Alegre,3,05101,300,252500.00,6336500.00,Sintético curso 14504,2023-05-02
+11,Cuartel Bomberos Viña del Mar,4,05109,3,262800.00,6343800.00,Sintético curso 14504,2023-06-15
+12,Cuartel Bomberos Quilpué,4,05801,4,274200.00,6342300.00,Sintético curso 14504,2023-06-15
+13,Cuartel Bomberos Concón,4,05103,2,264000.00,6354500.00,Sintético curso 14504,2023-06-15
+14,Planta de agua potable Concón,5,05103,,266500.00,6352000.00,Sintético curso 14504,2023-07-20
+15,Centro comercial Marina,6,05109,,262500.00,6346000.00,Sintético curso 14504,2023-08-01
+16,Sede vecinal El Olivar,7,05109,,268500.00,6347500.00,Sintético curso 14504,2023-08-01
+17,Sede vecinal Achupallas,7,05109,,266000.00,6345000.00,Sintético curso 14504,2023-08-01
+18,Escuela Villa Alemana Norte,3,05804,510,280500.00,6344500.00,Sintético curso 14504,2023-05-02
+19,CESFAM Miraflores,2,05101,,264500.00,6342000.00,Sintético curso 14504,2024-01-12
