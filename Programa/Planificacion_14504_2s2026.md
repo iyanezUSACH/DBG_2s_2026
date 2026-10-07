@@ -47,7 +47,7 @@ Ausencias del docente ya incorporadas a este calendario: 13–16 de octubre,
     o Miércoles 07/10 — Modelo lógico: traducción de cardinalidades a
       tablas (1:N, 1:1, N:M, entidad débil, multivaluados), tipos de
       campos y dominios, claves (candidata, primaria, alternativa,
-      foránea, compuesta, natural/sustituta) e integridad referencial
+      foránea, compuesta, natural/sustituta) e integridad referencial.
       Cátedra y taller en la misma sesión (presentación U1, diapositivas
       11–21; Guía U1, 1.11 y 1.21). Prepara el Lab autónomo C de la semana 4.
     * Aplicación inmediata al caso de cada equipo: catálogo de entidades del
@@ -71,7 +71,7 @@ completa sin clase presencial.
       y noción de FNBC.
     o Instalación de PostgreSQL 16, pgAdmin 4 y PostGIS 3.4 en la misma
       sesión; comprobación con CREATE EXTENSION postgis.
-    * Control 1 (24 oct): modelo ER/EER y relacional, normalización.
+    * Control 1 (jueves 22 oct): modelo ER/EER y relacional, normalización.
     * Hito P1 (23 oct): reglas de negocio, catálogo de entidades, ER/EER y
       esquema en 3FN del proyecto.
 
@@ -91,6 +91,7 @@ completa sin clase presencial.
       caso académico pasan a geometry(Point); ST_Distance contrastado con
       km_haversine (Guía U2, 2.21–2.25).
     o Revisión de un paso del Lab autónomo A elegido al azar.
+    * Lab 7: ejercicios 2.1–2.5 y 2.21–2.25 de la Guía U2.
 
 8° Semana: 09/11 (Presencial) — Entra el caso territorial
     o Consultas, funciones, agregación, combinaciones, subconsultas y vistas
@@ -149,9 +150,9 @@ docente.
       superficie quemada por comuna, 4.15 EXPLAIN ANALYZE con índice GiST),
       contrastadas con los pasos B8–B9 del Lab autónomo B; control de
       calidad de datos (ISO 19157-1) sobre stg_area_quemada.
-    o Miércoles 17: cátedra de cierre — tabla G3 completa (equivalencias
+    o Miércoles 16: cátedra de cierre — tabla G3 completa (equivalencias
       herramienta ↔ SQL), dudas de proyecto.
-    * Control 3 (17 dic, escrito): PostGIS y SQL espacial sobre lo ya hecho
+    * Control 3 (jueves 17 dic, escrito): PostGIS y SQL espacial sobre lo ya hecho
       en clase.
     * Hito P3 (18 dic): geodatabase con dominios, subtipos y relationship
       classes; geoprocesos en ModelBuilder; datos en PostGIS validados e
@@ -200,10 +201,17 @@ Qué cambia en esta versión (30/09/2026):
 - Sin cambios en las fechas de controles, hitos, labs autónomos, prueba ni
   defensas.
 
-Material que hay que ajustar para cumplir esta versión: Guía U1 (ejercicio
-de catálogo de entidades ISO 19110), Lab A (paso de verificación de
-PostGIS), Guía U2 (2.21–2.25 pasan a la semana 7 con geometría real) y
-presentaciones de U1 y U2.
+Ajustes de material derivados de esta versión, ya incorporados (07/10/2026):
+Guía U1 (catálogo de entidades ISO 19110, ejercicio 1.19; modelo lógico,
+1.21), Lab A (paso A2b de verificación de PostGIS), Guía U2 (2.21–2.25 en
+la semana 7, con 2.25 sobre geometría real), Guías U3 y U4 (ejercicios ★
+repartidos en las semanas 9, 11 y 13), Módulo G, Lab B y presentaciones
+de U1 (bloque de modelo lógico) y U2. Respuestas de las guías en
+Laboratorio/Soluciones y en las carpetas sql/.
+
+Fechas corregidas el 07/10/2026: Control 1 pasa del sábado 24 al jueves
+22 de octubre (los controles 2 y 3 también son en jueves) y la cátedra
+de cierre de la semana 13 es el miércoles 16 de diciembre.
 
 Bibliografía: ver Cátedra/Recursos/Bibliografia.md y la sección
 Bibliografía del Programa de la asignatura (v2026-09-30).

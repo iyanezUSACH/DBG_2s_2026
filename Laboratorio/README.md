@@ -4,7 +4,7 @@
 
 | Carpeta | Contenido | Unidades |
 |---|---|---|
-| `Guías/` | Guías por unidad, Módulo G y labs autónomos A y B | U1–U4 |
+| `Guías/` | Guías por unidad, Módulo G, labs autónomos A, B y C y banco de ejercicios extra | U1–U4 |
 | `sql/01_caso_academico/` | Caso clásico: registro académico universitario (sin geometría) | U1–U2 |
 | `sql/02_caso_incendios/` | Caso territorial: infraestructura crítica e incendios forestales | U3–U4 |
 | `datos/` | CSV y GeoPackage del caso incendios para ArcGIS Pro | U3 |
@@ -20,9 +20,9 @@ psql -d academico -f sql/01_caso_academico/a02_datos.sql
 
 Departamentos, carreras, personas (estudiantes y profesores), asignaturas con prerrequisitos, secciones por período, horarios, salas y sus mobiliarios, domicilios e inscripciones con nota.
 
-Incluye a propósito una especialización solapada, una entidad débil, una relación recursiva, una relación 1:1 (domicilio), algunas inscripciones que no cumplen prerrequisitos y **la ubicación como atributo**: comuna con código único territorial, dirección y coordenadas en grados (EPSG:4326) para el campus, los edificios y los domicilios. En la Unidad 3 esas columnas se reemplazan por una columna `geometry` y las consultas de distancia pasan de una fórmula de haversine a `ST_Distance` y `ST_DWithin`.
+Incluye a propósito una especialización solapada, una entidad débil, una relación recursiva, una relación 1:1 (domicilio), algunas inscripciones que no cumplen prerrequisitos y **la ubicación como atributo**: comuna con código único territorial, dirección y coordenadas en grados (EPSG:4326) para el campus, los edificios y los domicilios. En la semana 7 esas columnas se convierten en una columna `geometry` y las consultas de distancia pasan de una fórmula de haversine a `ST_Distance` y `ST_DWithin`.
 
-## Caso territorial (semanas 10–17)
+## Caso territorial (semanas 8–17)
 
 ```bash
 createdb geodatos

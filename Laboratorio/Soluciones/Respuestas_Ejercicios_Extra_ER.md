@@ -135,7 +135,7 @@ La disjunción (un DNI no puede estar a la vez en `empleado` y `periodista`) no 
 - `persona(dni PK, nombre, sexo, fecha_nacimiento, id_vivienda FK → vivienda RESTRICT NOT NULL, dni_cabeza_familia FK → persona SET NULL)`
 - `propiedad(dni FK → persona RESTRICT, id_vivienda FK → vivienda RESTRICT)`, PK `(dni, id_vivienda)`
 
-El cabeza de familia es nulo para quien es su propio cabeza de familia, o bien se apunta a sí mismo; documente cuál de las dos convenciones usa. La vivienda es el objeto con ubicación del caso: en la Unidad 3 tendría una geometría de punto.
+El cabeza de familia es nulo para quien es su propio cabeza de familia, o bien se apunta a sí mismo; documente cuál de las dos convenciones usa. La vivienda es el objeto con ubicación del caso: desde la semana 7 tendría una geometría de punto.
 
 ## E.8 · Nóminas de una empresa
 

@@ -1,11 +1,12 @@
 # 🧭 Lab autónomo A · Implementar el registro académico en PostgreSQL
 
-**Semana 6 (26–30 de octubre) · sin clase presencial.** Tiempo estimado: 4 h + 2 h. **Entrega: viernes 30 de octubre, 23:59.** Requisito: PostgreSQL 16 y pgAdmin 4 instalados en la semana 5. Scripts: `Laboratorio/sql/01_caso_academico/`.
+**Semana 6 (26–30 de octubre) · sin clase presencial.** Tiempo estimado: 4 h + 2 h. **Entrega: viernes 30 de octubre, 23:59.** Requisito: PostgreSQL 16, pgAdmin 4 y PostGIS 3.4 instalados en la semana 5. Scripts: `Laboratorio/sql/01_caso_academico/`.
 
 | Paso | Qué hacer | Qué debe verse |
 |---|---|---|
 | A1 | Abrir pgAdmin 4, expandir *Servers* e ingresar la contraseña de `postgres` | Nodo *PostgreSQL 16* con *Databases* |
 | A2 | Clic derecho en *Databases* → *Create* → *Database*: `academico_<apellido>`, UTF8 | **Captura 1:** base creada |
+| A2b | En *Query Tool*: `CREATE EXTENSION IF NOT EXISTS postgis;` y `SELECT postgis_full_version();` | Versión `POSTGIS="3.4…"`: PostGIS queda listo para la semana 7 (ejercicio 2.25) |
 | A3 | *Tools* → *Query Tool* → abrir `a01_esquema.sql` → F5 | **Captura 2:** “Query returned successfully” |
 | A4 | Refrescar y abrir *Schemas* → *academico* → *Tables*; revisar *Columns* y *Constraints* de `inscripcion` y `seccion` | Responder: ¿qué dominios usa `inscripcion`?, ¿qué hace `ck_estado_nota`?, ¿por qué la PK de `seccion` tiene tres columnas?, ¿dónde se guarda la sala de una clase y por qué no está en `seccion`? |
 | A5 | Ejecutar `a02_datos.sql` | **Captura 3:** persona 17, estudiante 12, profesor 6, asignatura 8, seccion 10, inscripcion 29, comuna 12, sala 5, mobiliario 13, domicilio 17, seccion_horario 11 |

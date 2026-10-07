@@ -14,7 +14,7 @@
 | B8 | *Pairwise Intersect* `area_vigente` × `comuna` → *Calculate Geometry Attributes* (ha) → *Summary Statistics* por `nombre` | Quilpué ≈ 2.123 ha · Viña del Mar ≈ 1.843 ha · Villa Alemana ≈ 959 ha · Valparaíso ≈ 565 ha |
 | B9 | *Definition Query* `id_tipo = 4` sobre `infraestructura`; *Near* desde `evento_incendio` | VAL-2024-001 ≈ 5.859 m del Cuartel Bomberos Quilpué · VAL-2025-002 ≈ 4.924 m del Cuartel Bomberos Concón |
 | B10 | *ModelBuilder*: encadenar B6–B9, parametrizar distancia y expresión, ejecutar y exportar el diagrama | Modelo ejecutable |
-| B11 | Escribir la función SQL equivalente de cada paso B4–B9 (tabla G3 del Módulo G) | Se implementa en PostGIS en las semanas 13 y 14 |
+| B11 | Escribir la función SQL equivalente de cada paso B4–B9 (tabla G3 del Módulo G) | Se contrasta con la Guía U4 ★: 4.2 y 4.6 (semana 11), 4.8 y 4.15 (semana 13) |
 
 ## Entrega
 

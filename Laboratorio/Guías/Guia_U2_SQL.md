@@ -1,6 +1,6 @@
 # Guía U2 · Implementación relacional y lenguaje SQL
 
-**Semanas 6–9 (26 oct – 20 nov; la semana 6 se trabaja con el Lab autónomo A).** Caso clásico: **registro académico**. Base: `sql/01_caso_academico/a01_esquema.sql` y `a02_datos.sql`. Entregar un `.sql` comentado por ejercicio con la salida relevante. ★ = nivel control.
+**Semanas 6–9 (26 oct – 20 nov).** Semana 6: Lab autónomo A (sin clase presencial). Semana 7: 2.1–2.5 y 2.21–2.25, con la ubicación convertida a geometría (Lab 7). Semana 8: 2.6–2.17 (Lab 8). Semana 9: 2.18; 2.19 y 2.20 quedan como práctica optativa. Caso clásico: **registro académico**. Base: `sql/01_caso_academico/a01_esquema.sql` y `a02_datos.sql`. Entregar un `.sql` comentado por ejercicio con la salida relevante. ★ = nivel control.
 
 ## A. Definición de datos y restricciones
 
@@ -50,7 +50,7 @@
 
 **2.20** **Desafío.** (a) Detecte las inscripciones de 2026-2 que no cumplen sus prerrequisitos aprobados (`NOT EXISTS`). (b) Obtenga la cadena completa de prerrequisitos de Inteligencia Territorial con `WITH RECURSIVE`.
 
-## E. La ubicación como atributo (puente a la Unidad 3)
+## E. De la ubicación como atributo a la geometría (semana 7)
 
 **2.21** ★ Escriba la función `km_haversine(lat1, lon1, lat2, lon2)` y calcule la distancia en línea recta entre el domicilio de cada estudiante y el campus. Ordene de mayor a menor. Control: Matías González (Puente Alto) 20,5 km; Catalina Reyes (Estación Central) 3,0 km.
 
@@ -60,7 +60,7 @@
 
 **2.24** Ocupación de las salas del martes en el bloque 5 (inscritos sobre capacidad) y computadores operativos disponibles. Después, las salas libres en ese bloque (`NOT EXISTS`).
 
-**2.25** Escriba, sin ejecutarla, cómo cambiaría cada consulta de 2.21–2.24 si la latitud y la longitud fueran una sola columna `geometry`. Compare su respuesta con la tabla de equivalencias del Módulo G.
+**2.25** ★ Active PostGIS en la base (`CREATE EXTENSION IF NOT EXISTS postgis`), agregue a `domicilio` y `campus` una columna `geom geometry(Point, 4326)` construida con `ST_SetSRID(ST_MakePoint(longitud, latitud), 4326)` y repita 2.21 con `ST_Distance(d.geom::geography, ca.geom::geography)`. Compare con `km_haversine`: ¿cuánto difieren y por qué? Escriba cómo cambiarían 2.22–2.24 y contraste con la tabla de equivalencias del Módulo G.
 
 ## Lab 8 · Banco de 15 consultas del proyecto
 

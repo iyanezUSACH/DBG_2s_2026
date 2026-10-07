@@ -1,6 +1,6 @@
 # Guía U4 · Consultas espaciales aplicadas
 
-**Semanas 14 y 16 (21–24 dic y 4–8 ene).** Base: scripts `i01`–`i03` de `sql/02_caso_incendios`. Criterio común: usar el perímetro más reciente de cada evento (vista `v_area_vigente`). Cada respuesta incluye la pregunta en lenguaje del cliente, la consulta, una interpretación de 2–3 líneas y **el geoproceso equivalente del Módulo G con el que se contrasta**. ★ = nivel prueba.
+**Semanas 11 y 13.** Evaluados (★): 4.2 y 4.6 en la semana 11, junto con los geoprocesos del Módulo G; 4.8 y 4.15 el 14 y 15 de diciembre, cuando cierra la práctica. El resto es banco de práctica optativa y material de la cátedra de las semanas 14 y 16. Base: scripts `i01`–`i03` de `sql/02_caso_incendios`. Criterio común: usar el perímetro más reciente de cada evento (vista `v_area_vigente`). Cada respuesta incluye la pregunta en lenguaje del cliente, la consulta, una interpretación de 2–3 líneas y **el geoproceso equivalente del Módulo G con el que se contrasta**. ★ = evaluado en laboratorio y en la prueba integradora.
 
 ```sql
 CREATE OR REPLACE VIEW riesgo.v_area_vigente AS

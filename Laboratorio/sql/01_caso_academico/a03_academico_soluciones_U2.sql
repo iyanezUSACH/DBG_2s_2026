@@ -242,11 +242,11 @@ FROM cadena c JOIN asignatura a ON a.cod_asig = c.cod_prereq
 ORDER BY c.nivel, a.cod_asig;
 
 -- =====================================================================
--- E. La ubicación como atributo (puente hacia la Unidad 3)
+-- E. De la ubicación como atributo a la geometría (semana 7)
 -- =====================================================================
 
 -- 2.21 Distancia domicilio -> campus con la fórmula de haversine en SQL puro.
---      En la U3 esto será ST_Distance sobre una columna geometry.
+--      En 2.25 se compara con ST_Distance sobre una columna geometry.
 CREATE OR REPLACE FUNCTION km_haversine(lat1 numeric, lon1 numeric, lat2 numeric, lon2 numeric)
 RETURNS numeric AS $$
   SELECT round((6371 * 2 * asin(sqrt(
@@ -323,8 +323,28 @@ WHERE NOT EXISTS (SELECT 1 FROM seccion_horario h
                     AND h.dia = 'Martes' AND h.num_bloque = 5)
 ORDER BY sa.cod_sala;
 
--- 2.25 Puente a la Unidad 3: las mismas preguntas con geometría
---   km_haversine(...)                    ->  ST_Distance(geom_domicilio, geom_campus)
---   WHERE km_haversine(...) <= 5         ->  WHERE ST_DWithin(geom_dom, geom_campus, 5000)
---   JOIN comuna c ON c.cod_comuna = ...  ->  JOIN comuna c ON ST_Within(d.geom, c.geom)
--- La consulta cambia de una sola columna: latitud/longitud pasan a ser geometry(Point, 32719).
+-- 2.25 De latitud y longitud a geometría (semana 7). Requiere PostGIS.
+--      ST_MakePoint recibe primero la LONGITUD y después la LATITUD.
+CREATE EXTENSION IF NOT EXISTS postgis;
+
+ALTER TABLE domicilio ADD COLUMN IF NOT EXISTS geom geometry(Point, 4326);
+ALTER TABLE campus    ADD COLUMN IF NOT EXISTS geom geometry(Point, 4326);
+UPDATE domicilio SET geom = ST_SetSRID(ST_MakePoint(longitud, latitud), 4326);
+UPDATE campus    SET geom = ST_SetSRID(ST_MakePoint(longitud, latitud), 4326);
+
+-- Misma pregunta que 2.21: la diferencia con haversine es menor a 0,5 %
+-- (haversine supone una esfera; geography usa el elipsoide WGS 84).
+SELECT p.apellidos || ', ' || p.nombres AS estudiante,
+       km_haversine(d.latitud, d.longitud, ca.latitud, ca.longitud) AS km_haversine,
+       round((ST_Distance(d.geom::geography, ca.geom::geography) / 1000)::numeric, 2) AS km_geography
+FROM estudiante e
+JOIN persona   p ON p.rut = e.rut
+JOIN domicilio d ON d.rut = e.rut
+CROSS JOIN campus ca
+WHERE ca.cod_campus = 'CEC'
+ORDER BY km_geography DESC;
+
+-- Cómo cambian 2.22–2.24 con geometría:
+--   WHERE km_haversine(...) <= 5         ->  WHERE ST_DWithin(d.geom::geography, ca.geom::geography, 5000)
+--   JOIN comuna c ON c.cod_comuna = ...  ->  JOIN comuna c ON ST_Within(d.geom, c.geom)  (requiere polígonos de comuna)
+-- En la Unidad 3 los puntos se proyectan a EPSG:32719 (ST_Transform) para medir en metros con geometry.

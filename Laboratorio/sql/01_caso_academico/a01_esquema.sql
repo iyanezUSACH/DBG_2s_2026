@@ -27,8 +27,8 @@ CREATE DOMAIN d_email AS varchar(80)
     CHECK (VALUE ~ '^[^@\s]+@[^@\s]+\.[a-z]{2,}$');
 
 -- La ubicación entra como ATRIBUTO, todavía sin geometría:
--- latitud y longitud en grados decimales (EPSG:4326). En la Unidad 3
--- estas dos columnas se convierten en una sola columna geometry.
+-- latitud y longitud en grados decimales (EPSG:4326). En la semana 7
+-- estas dos columnas se convierten en una sola columna geometry (ejercicio 2.25).
 CREATE DOMAIN d_lat AS numeric(9,6)
     CHECK (VALUE BETWEEN -56.0 AND -17.0);      -- Chile continental
 
@@ -230,5 +230,5 @@ COMMENT ON TABLE  inscripcion IS 'Relación N:M estudiante-sección con nota y e
 COMMENT ON COLUMN inscripcion.nota IS 'Escala chilena 1,0 a 7,0; NULL mientras la asignatura está en curso';
 COMMENT ON TABLE  prerrequisito IS 'Relación recursiva N:M entre asignaturas';
 COMMENT ON TABLE  domicilio IS 'Domicilio principal declarado; latitud y longitud en EPSG:4326 (grados)';
-COMMENT ON COLUMN domicilio.latitud IS 'En la Unidad 3 estas dos columnas se reemplazan por una columna geometry(Point, 32719)';
+COMMENT ON COLUMN domicilio.latitud IS 'En la semana 7 estas dos columnas se convierten en una columna geometry(Point); en la Unidad 3 se proyecta a EPSG:32719';
 COMMENT ON TABLE  seccion_horario IS 'Día, bloque y sala de cada reunión de una sección';

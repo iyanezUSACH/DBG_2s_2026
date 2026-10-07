@@ -1,6 +1,6 @@
 -- =====================================================================
 -- Diseño de Bases de Geodatos (14504) · USACH
--- Caso territorial · Script i01: esquema relacional (se entrega modelado en la semana 10)
+-- Caso territorial · Script i01: esquema relacional (se entrega modelado en la semana 8)
 -- "Exposición de infraestructura crítica a incendios forestales,
 --  Región de Valparaíso" (cliente ficticio: SENAPRED Valparaíso)
 -- Motor: PostgreSQL 16. Ejecutar en una base vacía, p. ej.:

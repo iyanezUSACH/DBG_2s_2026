@@ -7,7 +7,7 @@
 1. **Generar** (S10): tablas del caso incendios a feature classes (XY Table To Point) y digitalización de lo que falta.
 2. **Estructurar** (S10): feature dataset con un solo sistema de referencia, dominios, subtipos y relationship classes.
 3. **Procesar** (S11–S12): selección, proximidad, superposición y agregación, encadenados en ModelBuilder.
-4. **Trasladar** (S13): la misma estructura y validación en PostGIS.
+4. **Trasladar** (S11 y S13): cada geoproceso a su SQL equivalente en PostGIS (Guía U4 ★), sobre el caso ya cargado en la semana 9.
 5. **Mapear** (S16): capas de consulta desde PostgreSQL y mapa final del proyecto.
 
 ## G2. Paralelo de conceptos

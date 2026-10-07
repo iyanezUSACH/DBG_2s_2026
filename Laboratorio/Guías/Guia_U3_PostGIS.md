@@ -1,6 +1,6 @@
 # Guía U3 · Modelado y gestión de datos espaciales en PostGIS
 
-**Semana 13 (14–18 dic), después del Módulo G.** Base: ejecutar en orden `sql/02_caso_incendios/i01_esquema_relacional.sql`, `i02_datos.sql` e `i03_espacial.sql`. El caso de incendios se entrega ya modelado: revisen su esquema como repaso de U1–U2 antes de espacializarlo. Incluir consulta, resultado y captura de ArcGIS Pro (capa de consulta) cuando se pida inspección visual. ★ = nivel control.
+**Semana 9 (18–20 nov), sobre el caso territorial; se retoma en la semana 13 (14–15 dic).** Evaluados (★): 3.3, 3.7 y 3.8 en la semana 9; el resto es práctica optativa (3.10 es requisito de 4.15). Base: ejecutar en orden `sql/02_caso_incendios/i01_esquema_relacional.sql`, `i02_datos.sql` e `i03_espacial.sql`. El caso de incendios se entrega ya modelado: revisen su esquema como repaso de U1–U2 antes de espacializarlo. Incluir consulta, resultado y captura de ArcGIS Pro (capa de consulta) cuando se pida inspección visual. ★ = nivel control.
 
 ## A. Tipos de geometría y representaciones
 
@@ -20,7 +20,7 @@
 
 ## C. Validez, calidad y reglas espaciales
 
-**3.7** ★ Diagnostique la tabla de paso con `ST_IsValid`, `ST_IsValidReason`, `ST_SRID` y la extensión. Corrija el SRID mal declarado (`ST_SetSRID` + `ST_Transform`) y los inválidos (`ST_MakeValid` + `ST_CollectionExtract`) y promuévalos a `area_quemada`. Compare con Check Geometry del Lab B.
+**3.7** ★ Diagnostique la tabla de paso con `ST_IsValid`, `ST_IsValidReason`, `ST_SRID` y la extensión. Corrija el SRID mal declarado (`ST_SetSRID` + `ST_Transform`) y los inválidos (`ST_MakeValid` + `ST_CollectionExtract`) y promuévalos a `area_quemada`. En el Lab B (semana 12) contrastará este diagnóstico con Check Geometry de ArcGIS Pro.
 
 **3.8** ★ Encuentre establecimientos cuya geometría no cae en la comuna declarada. Implemente un trigger que impida nuevos casos (equivalente a una attribute rule) y demuéstrelo.
 

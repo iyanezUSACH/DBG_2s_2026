@@ -62,7 +62,7 @@
 
 **1.16** ★ El horario de una sección no cabe en la tabla `seccion`: una sección puede reunirse martes y jueves. Modele `seccion_horario` y justifique su clave primaria. ¿Qué regla impide que dos secciones usen la misma sala el mismo día y bloque?
 
-**1.17** Hoy la ubicación se guarda como texto (calle, número, comuna) más dos números (latitud y longitud). Escriba tres preguntas que se pueden responder con eso y dos que **no** (por ejemplo, “¿cuántos estudiantes viven a menos de 5 km del campus en línea recta por su comuna real?”). Guarde la lista: la retomaremos en la Unidad 3.
+**1.17** Hoy la ubicación se guarda como texto (calle, número, comuna) más dos números (latitud y longitud). Escriba tres preguntas que se pueden responder con eso y dos que **no** (por ejemplo, “¿cuántos estudiantes viven a menos de 5 km del campus en línea recta por su comuna real?”). Guarde la lista: la retomaremos en la semana 7, cuando la ubicación pase a ser geometría.
 
 **1.18** Compare dos formas de guardar la comuna de un domicilio: el nombre escrito a mano o el código único territorial con clave foránea a una tabla `comuna`. ¿Qué anomalías evita la segunda?
 

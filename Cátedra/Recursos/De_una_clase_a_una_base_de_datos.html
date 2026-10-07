@@ -312,7 +312,7 @@ const STEPS=[
   t:'7 · ¿De dónde vienen?',
   title:'Cada estudiante llega desde alguna parte',
   text:'El domicilio es una relación 1:1 con persona: calle, número, comuna y coordenadas. Con eso ya se puede calcular cuánto viaja cada quien.',
-  note:'Con latitud y longitud en columnas numéricas, la distancia se calcula con la fórmula de haversine escrita a mano. En la Unidad 3 será ST_Distance sobre una columna geometry.',
+  note:'Con latitud y longitud en columnas numéricas, la distancia se calcula con la fórmula de haversine escrita a mano. Desde la semana 7 será ST_Distance sobre una columna geometry.',
   mapa:true,
   figs:AL.map((a,i)=>({i:'alumno',c:COLOR[i],b:a[1].split(' ')[0],s:DOM[a[0]][2]+' · '+DOM[a[0]][5]+' km',k:a[0]})),
   tables:[
@@ -358,7 +358,7 @@ const STEPS=[
   t:'10 · La base completa',
   title:'Una pregunta, una consulta',
   text:'Con doce tablas la universidad responde preguntas que ninguna planilla suelta puede responder.',
-  note:'Esta es la misma lógica que en la Unidad 3 aplicaremos al territorio: solo cambia que una de las columnas será una geometría.',
+  note:'Esta es la misma lógica que desde la semana 8 aplicaremos al territorio: solo cambia que una de las columnas será una geometría.',
   figs:[{i:'bd',b:'12 tablas',s:'un solo lugar por dato'},{i:'sala',b:'LAB-GEO',s:'martes, bloque 5'},{i:'alumno',b:'5 personas',s:'y su historia'}],
   sql:true,
   tables:[]
@@ -494,7 +494,7 @@ WHERE  ca.cod_campus = 'CEC'
 ORDER  BY km_al_campus DESC;
 <b>-- Puente Alto 20,5 km · Estación Central 3,0 km</b>
 
-<b>-- En la Unidad 3, la misma pregunta con geometría:</b>
+<b>-- Desde la semana 7, la misma pregunta con geometría:</b>
 --   ST_Distance(d.geom, ca.geom)
 --   ST_DWithin(d.geom, ca.geom, 5000)
 --   ST_Within(d.geom, c.geom)   -- la comuna real, no la declarada</pre>`);

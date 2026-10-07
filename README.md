@@ -95,7 +95,7 @@ Al finalizar la asignatura, serás capaz de **implementar una base de geodatos r
 |---|---|---|---|
 | 1 | 21–25 sep | SGBD, niveles de abstracción, esquema e instancia · caso clásico: registro académico | Diagnóstica |
 | 2 | 28 sep–2 oct | Presentaciones de los estudiantes: modelado conceptual | Hito P0 |
-| 3 | 5–9 oct | Requerimientos, modelado del espacio geográfico (ISO 19109/19110) y modelo ER | — |
+| 3 | 5–9 oct | Requerimientos, modelado del espacio geográfico (ISO 19109/19110), modelo ER y modelo lógico | — |
 | 4 | 12–16 oct | **Sin clase presencial:** Lab autónomo C (modelo relacional y 3FN) | Lab C |
 | 5 | 19–23 oct | EER y FNBC · instalación de PostgreSQL y PostGIS | Control 1 · Hito P1 |
 | 6 | 26–30 oct | **Sin clase presencial:** Lab autónomo A (implementar el registro académico) | Lab A |
